@@ -19,7 +19,7 @@
       "tabsAccount": "帐号登录",
       "tabsEmail": "邮箱登录",
       "password": "密码",
-      "email": "电子邮件",
+      "email": "登录邮件",
       "btnLogin": "登录",
       "username": "用户名",
       "register": "点我注册",
@@ -31,7 +31,11 @@
       "password": "用户密码",
       "pass2": "重复密码",
       "registerCancel": "取消",
-      "registerConfirm": "注册"
+      "registerConfirm": "注册",
+      "stuId": "学号",
+      "realName": "真实姓名",
+      "email": "登录邮箱",
+      "code": "验证码"
     },
     "personal": {
       "title": "个人设置",
@@ -43,7 +47,7 @@
       "degree": "最高学历：",
       "department": "所属系部：",
       "school": "所属学校：",
-      "eMail": "电子邮件：",
+      "eMail": "电子邮箱：",
       "phone": "手机号码：",
       "submit": "提交信息",
       "modify": "修改信息",
@@ -52,7 +56,51 @@
       "university": "本科",
       "postgraduate": "研究生",
       "PhD": "博士及以上",
-      "junior": "大专及以下"
+      "junior": "大专及以下",
+      "undergrauate": "本科生",
+      "masterStudent": "研究生",
+      "senior": "高中生",
+      "stuId": "学号：",
+      "save": "保存",
+      "other": "其他"
+    },
+    "codingQuestion": {
+      "title": "编程题列表"
+    },
+    "codingTest": {
+      "title": "编程测试"
+    },
+    "codingRecord": {
+      "title": "答题汇总"
+    },
+    "createQuestion": {
+      "topic": "题目标题",
+      "describe": "问题描述",
+      "hint": "编程提示",
+      "programLang": "编程语言",
+      "memLimit": "内存限制(kb)",
+      "timeLimit": "时间限制(毫秒)",
+      "preCode": "预置代码",
+      "preFuncName": "预置函数/方法名称",
+      "submit": "提交",
+      "title": "新建编程题",
+      "editTitle": "修改编程题",
+      "cancel": "取消"
+    },
+    "createdQuestions": {
+      "title": "已创建题目",
+      "edit": "编辑",
+      "addTest": "添加测试代码"
+    },
+    "addTest": {
+      "title": "添加测试代码",
+      "topic": "题目标题",
+      "inputDataStructure": "输入的数据结构",
+      "outputDataStructure": "输出的数据结构",
+      "data": "输入输出",
+      "save": "保存",
+      "createFile": "创建测试文件",
+      "testProgram": "请选择判题程序代码"
     },
     "module": {
       "module": "课程总览",
@@ -122,7 +170,8 @@
     "userinfo": "Userinfo",
     "firstPage": "Home",
     "setting": "Setting",
-    "exit": "Exit"
+    "exit": "Exit",
+    "answer": "答案"
   },
   "message": {
     "loginPage": {
@@ -130,7 +179,8 @@
       "validMail": "输入的邮件地址无效",
       "inputName": "请输入用户名",
       "inputPassword": "请输入密码",
-      "notFound": "账户名不存在或密码错"
+      "notFound": "账户名不存在或密码错",
+      "verifyEmail": "邮箱验证完成才可以进入系统"
     },
     "signUp": {
       "inputIdNo": "请输入您的身份证号",
@@ -139,15 +189,21 @@
       "inputName": "请输入用户名",
       "inputPassword": "请输入密码",
       "isFound": "该账户名称已被占用，请更换再试",
-      "isCreated": "账户已建立，请登录"
+      "isCreated": "账户已建立，请登录",
+      "inputStuId": "请输入学号",
+      "invalidStuId": "学号要求4到16位，由数字组成",
+      "inputRealName": "请输入真实姓名",
+      "inputEmail": "请输入登录邮箱",
+      "invalidEmail": "登录邮箱格式不正确",
+      "inputCode": "请输入验证码"
     },
     "personal": {
-      "guestInfo": "完善信息后，将成为正式用户，只有正式用户才可以参与助教资格的申请",
+      "guestInfo": "完善信息后，将成为正式用户，只有正式用户才可以参与该系统",
       "teacherInfo": "教师身份需要管理员审核，请等待一段时间或主动与管理员联系",
       "phName": "注意：姓名输入后不能更改。 例: 张三/ Tom 、王五 或 Cary",
       "inputName": "请输入您的姓名",
       "phDegree": "请选择最高学历",
-      "phDepartment": "请选择或手动输入所属系部",
+      "phDepartment": "请选择所属系部",
       "phSchool": "请选择或手动输入所属学校",
       "phEmail": "请输入电子邮件",
       "phCellPhone": "请输入手机号码",
@@ -158,7 +214,38 @@
       "realName": "请检查 中/英文名 一栏，并填写真实姓名",
       "reLogin": "个人信息已提交，权限变更，请重新登陆",
       "modifySuccess": "个人信息修改成功",
-      "serverError": "服务器出错，信息修改失败，请稍后再试"
+      "serverError": "服务器出错，信息修改失败，请稍后再试",
+      "stuId": "请输入学号",
+      "inputOldPasswd": "请输入旧密码",
+      "inputNewPasswd": "请输入新密码",
+      "wrongPassword": "输入的旧密码有误",
+      "verifyEmail": "请验证邮箱",
+      "send": "发送",
+      "inputCode": "请输入验证码",
+      "changePassSucceed": "修改密码成功"
+    },
+    "codingTest": {
+      "createFileSucceed":"创建文件成功"
+    },
+    "createQuestion": {
+      "inputTopic": "请输入标题",
+      "topicLength": "字数应在2到50个之间",
+      "describeLength": "字数不超过200个",
+      "hintLength": "字数不超过200个",
+      "inputProgramLang": "请选择语言",
+      "memLimitForm": "请输入数字",
+      "inputPreCode": "请输入预置代码",
+      "inputPreFuncName": "请输入预定函数/方法名称",
+      "preFuncNameLength": "字数应在2到50个之间"
+    },
+    "addTest": {
+      "inputData": "请填写输入数据",
+      "outputData": "请填写输出数据",
+      "changeSucceed": "修改成功！",
+      "notMatch": "数据结构不匹配",
+      "programLangNotMatch": "语言不匹配",
+      "createFileSucceed": "创建文件成功",
+      "testcaseNotFound": "测试用例不存在"
     },
     "module": {
       "invalidTitle": "课程名称长度应在 4 到 100 个字符之间",

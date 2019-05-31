@@ -26,6 +26,36 @@ export default new Router({
           meta: { title: '个人设置' }
         },
         {
+          path: '/codingQuestion',
+          component: resolve => require(['../components/page/CodingQuestion.vue'], resolve),
+          meta: { title: '编程题列表' }
+        },
+        {
+          path: '/codingTest',
+          component: resolve => require(['../components/page/CodingTest.vue'], resolve),
+          meta: { title: '编程测试' }
+        },
+        {
+          path: '/codingRecord',
+          component: resolve => require(['../components/page/CodingRecord.vue'], resolve),
+          meta: { title: '答题汇总' }
+        },
+        {
+          path: '/addTest',
+          component: resolve => require(['../components/page/AddTest.vue'], resolve),
+          meta: { title: '添加测试代码' }
+        },
+        {
+          path: '/createQuestion',
+          component: resolve => require(['../components/page/CreateQuestion.vue'], resolve),
+          meta: { title: '新建编程题' }
+        },
+        {
+          path: '/createdQuestions',
+          component: resolve => require(['../components/page/CreatedQuestions.vue'], resolve),
+          meta: { title: '已创建题目' }
+        },
+        {
           path: '/module',
           component: resolve => require(['../components/page/Module.vue'], resolve),
           meta: { title: 'Overview' }

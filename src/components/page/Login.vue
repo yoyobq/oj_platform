@@ -4,15 +4,15 @@
     <div class="ms-login">
       <el-tabs class="ms-form" v-model="activeName">
         <el-tab-pane :label="$t('common.loginPage.tabsAccount')" name="account">
-          <el-form :model="loginForm" :rules="rules" ref="loginForm" label-width="0px">
-            <el-form-item prop="username">
-              <el-input v-model="loginForm.username" prefix-icon="fa fa-user" :placeholder="$t('common.loginPage.username')"></el-input>
+          <el-form :model="mailLoginForm" :rules="mailRules" ref="mailLoginForm" label-width="0px">
+            <el-form-item prop="email">
+              <el-input v-model="mailLoginForm.email" prefix-icon="fa fa-user" :placeholder="$t('common.loginPage.email')"></el-input>
             </el-form-item>
             <el-form-item prop="password">
-              <el-input type="password" prefix-icon="fa fa-lock" :placeholder="$t('common.loginPage.password')" v-model="loginForm.password" @keyup.enter.native="submitForm('loginForm')"></el-input>
+              <el-input type="password" prefix-icon="fa fa-lock" :placeholder="$t('common.loginPage.password')" v-model="mailLoginForm.password" @keyup.enter.native="submitForm('mailLoginForm')"></el-input>
             </el-form-item>
             <div class="login-btn">
-              <el-button type="primary" @click="submitForm('loginForm')">{{$t('common.loginPage.btnLogin')}}</el-button>
+              <el-button type="primary" @click="submitForm('mailLoginForm')">{{$t('common.loginPage.btnLogin')}}</el-button>
             </div>
             <el-button type="text" class="reg-info" @click="signUp()" ><i class="fa fa-user-plus"></i> {{$t('common.loginPage.verify')}}</el-button>
           </el-form>
@@ -55,11 +55,11 @@ export default {
         ]
       },
       mailLoginForm: {
-        usermail: '',
+        email: '',
         password: ''
       },
       mailRules: {
-        usermail: [
+        email: [
           { required: true, message: this.$t('message.loginPage.inputMail'), trigger: 'blur' },
           { type: 'email', message: this.$t('message.loginPage.validMail'), trigger: 'blur' }
         ],
@@ -81,7 +81,7 @@ export default {
             theForm.username = this.loginForm.username
             theForm.password = this.loginForm.password
           } else {
-            theForm.usermail = this.mailLoginForm.usermail
+            theForm.email = this.mailLoginForm.email
             theForm.password = this.mailLoginForm.password
           }
           // 将密码加密再传输
@@ -164,8 +164,12 @@ export default {
       sessionStorage.setItem('id', res.id)
 
       let permitList = res.permission
+      let permissionStr = ''
       permitList = JSON.parse(permitList)
-      let permissionStr = JSON.stringify(await this.computePermission(permitList))
+      if (permitList[1] === 2 || permitList[0] === 2) {
+        sessionStorage.setItem('permissionId', '2')
+      }
+      permissionStr = JSON.stringify(await this.computePermission(permitList))
       sessionStorage.setItem('permission', permissionStr)
     },
     async computePermission (permitList) {
@@ -176,7 +180,6 @@ export default {
         // forbidden > execute > read > ''
         permit = JSON.parse(permit)
         for (let page in permit) {
-          // console.log(permit[page])
           if (finalPermit[page] === undefined) {
             finalPermit[page] = permit[page]
           } else if (permit[page] === 'forbidden') {
@@ -199,13 +202,20 @@ export default {
         localStorage.setItem('realName', stuInfo.realName)
         localStorage.setItem('sex', stuInfo.sex)
         localStorage.setItem('stuId', stuInfo.stuId)
-        localStorage.setItem('classId', stuInfo.classId)
-        localStorage.setItem('className', await this.getClassName(stuInfo.classId))
-        localStorage.setItem('departmentId', stuInfo.departmentId)
-        localStorage.setItem('departmentName', await this.getDepartmentName(stuInfo.departmentId))
-        localStorage.setItem('specialityId', stuInfo.specialityId)
-        localStorage.setItem('specName', await this.getSpecName(stuInfo.specialityId))
-
+        if (stuInfo.classId !== null) {
+          localStorage.setItem('classId', stuInfo.classId)
+          localStorage.setItem('className', await this.getClassName(stuInfo.classId))
+        }
+        if (stuInfo.departmentId !== null) {
+          localStorage.setItem('departmentId', stuInfo.departmentId)
+          localStorage.setItem('departmentName', await this.getDepartmentName(stuInfo.departmentId))
+          localStorage.setItem('eduBack', stuInfo.eduBack)
+          // localStorage.setItem('cellphone', stuInfo.stuId)
+        }
+        if (stuInfo.specialityId !== null) {
+          localStorage.setItem('specialityId', stuInfo.specialityId)
+          localStorage.setItem('specName', await this.getSpecName(stuInfo.specialityId))
+        }
         localStorage.setItem('email', authInfo.email)
         localStorage.setItem('lastLoginIp', authInfo.lastLoginIp)
         localStorage.setItem('lastLoginTime', authInfo.lastLoginTime)

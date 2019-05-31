@@ -15,13 +15,18 @@ module.exports = {
         target: 'http://127.0.0.1:7001',
         changeOrigin: true,
       },
+      /* '/email': {
+        target: 'http://localhost:8081', // 接口的域名
+            // secure: false,  // 如果是https接口，需要配置这个参数
+        changeOrigin: true
+      } */
       // '/ms': {
       //   target: 'https://www.easy-mock.com/mock/592501a391470c0ac1fab128',
       //   changeOrigin: true
       // }
     },
     // Various Dev Server settings
-    host: '192.168.72.55', // can be overwritten by process.env.HOST
+    //host: '192.168.72.55', // can be overwritten by process.env.HOST
     port: 8080, // can be overwritten by process.env.PORT, if port is in use, a free one will be determined
     autoOpenBrowser: false,
     errorOverlay: true,

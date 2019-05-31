@@ -7,7 +7,7 @@
         </div>
         <div>
           <el-checkbox-group v-model="currentAnswer" @change="checkAnswer(quest.quest_Answer)">
-            <div v-for='(option, optIndex) in options'>
+            <div v-for='(option, optIndex) in options' :key='optIndex'>
               <div v-if="option != null">
                 <el-checkbox :label="optList[optIndex]">
                   {{ optList[optIndex] }}

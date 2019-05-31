@@ -14,6 +14,8 @@ import VueCookies from 'vue-cookies'
 import VueI18n from 'vue-i18n' // 国际化插件
 // import Crypto from 'crypto'
 import Moment from 'moment'
+import VueCodeMirror from 'vue-codemirror-lite'
+Vue.use(VueCodeMirror)
 
 // Vue.use(apiv1)
 // Vue.prototype.$apiv1 = apiv1
@@ -34,7 +36,7 @@ Vue.prototype.$moment = Moment
 router.beforeEach((to, from, next) => {
   let permission = JSON.parse(sessionStorage.getItem('permission'))
   // 获取页面的权限
-  console.log(permission)
+  // console.log(permission)
   // console.log(to.meta.needLogin)
   // 若是注册登录页面，无须验证session
   if (permission === null && to.meta.needLogin === false) {
@@ -62,11 +64,11 @@ router.beforeEach((to, from, next) => {
         next()
       }
     } else {
-      console.log(to.path)
+      // console.log(to.path)
       Vue.prototype.$alert('您没有访问目标组件或页面的权限，本次访问已被记录', '非法访问', {
         confirmButtonText: '确定'
       })
-      router.go(-1)
+      router.go(0)
     }
   }
 })

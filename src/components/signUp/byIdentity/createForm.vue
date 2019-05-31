@@ -1,18 +1,30 @@
 <template>
-  <el-dialog title="第 3 步（共 3 步）：建立帐号并完成注册" :visible.sync="createShow" width="500px" :close-on-click-modal="false" :close-on-press-escape="false" :show-close="false">
+  <el-dialog :title="$t('common.signUp.registerConfirm')" :visible.sync="createShow" width="500px" :close-on-click-modal="false" :close-on-press-escape="false" :show-close="false">
     <el-form :model="authInfo" :rules="authRules" ref="authInfo">
-      <el-form-item :label="$t('common.signUp.userName')" :label-width="formLabelWidth" prop="username">
-        <el-input v-model.trim="authInfo.username" auto-complete="off"></el-input>
+      <el-form-item :label="$t('common.signUp.stuId')" :label-width="formLabelWidth" prop="stuId">
+        <el-input v-model.trim="authInfo.stuId" auto-complete="off"></el-input>
+      </el-form-item>
+      <el-form-item :label="$t('common.signUp.realName')" :label-width="formLabelWidth" prop="realName">
+        <el-input v-model.trim="authInfo.realName" auto-complete="off"></el-input>
+      </el-form-item>
+      <el-form-item :label="$t('common.signUp.email')" :label-width="formLabelWidth" prop="email">
+        <el-input v-model.trim="authInfo.email" auto-complete="off" :disabled="isVerifyEmail">
+          <el-button v-if="!isVerifyEmail" slot ="append" type="primary" @click="verifyEmail()">点击验证邮箱</el-button>
+          <i v-if="isVerifyEmail" slot ="append" class="el-icon-check"></i>
+        </el-input>
       </el-form-item>
       <el-form-item :label="$t('common.signUp.password')" :label-width="formLabelWidth" prop="password" width="150px">
         <el-input :type="registerPassword" v-model.trim="authInfo.password" auto-complete="off">
           <el-button slot="append" :icon="passwordIcon" @click="changeType()"></el-button>
         </el-input>
       </el-form-item>
+      <el-form-item :label="$t('common.signUp.code')" :label-width="formLabelWidth" prop="code">
+        <el-input v-model.trim="authInfo.code" auto-complete="off"></el-input>
+      </el-form-item>
     </el-form>
     <div slot="footer" class="dialog-footer">
       <!-- <el-button @click="cancelAll()">{{$t('common.signUp.registerCancel')}}</el-button> -->
-      <el-button @click="cancelSignUp">回到上一步</el-button>
+      <el-button @click="cancelSignUp">回到登录</el-button>
       <el-button type="primary" @click="signUp()">{{$t('common.signUp.registerConfirm')}}</el-button>
     </div>
   </el-dialog>
@@ -28,11 +40,32 @@ export default {
       registerPassword: 'password',
       passwordIcon: 'fa fa-eye',
       formLabelWidth: '100px',
+      isVerifyEmail: false,
+      verifiedEmail: '',
+      validCode: '',
       authInfo: {
-        username: '',
-        password: ''
+        // username: '',
+        password: '',
+        stuId: '',
+        realName: '',
+        email: ''
       },
       authRules: {
+        stuId: [
+          { required: true, message: this.$t('message.signUp.inputStuId'), trigger: 'blur' },
+          {
+            pattern: /^[0-9]{4,16}$/,
+            message: this.$t('message.signUp.invalidStuId'),
+            trigger: 'blur'
+          }
+        ],
+        realName: [
+          { required: true, message: this.$t('message.signUp.inputStuId'), trigger: 'blur' }
+        ],
+        code: [
+          { required: true, message: this.$t('message.signUp.inputCode'), trigger: 'blur' }
+        ],
+        /*
         username: [
           { required: true, message: this.$t('message.signUp.inputName'), trigger: 'blur' },
           {
@@ -41,9 +74,18 @@ export default {
             trigger: 'blur'
           }
         ],
+        */
         password: [
           { required: true, message: this.$t('message.signUp.inputPassword'), trigger: 'blur' },
           { min: 6, message: this.$t('message.signUp.minPassword'), trigger: 'blur' }
+        ],
+        email: [
+          { required: true, message: this.$t('message.personal.phEmail'), trigger: 'blur' },
+          {
+            pattern: /[\w!#$%&'*+/=?^_`{|}~-]+(?:\.[\w!#$%&'*+/=?^_`{|}~-]+)*@(?:[\w](?:[\w-]*[\w])?\.)+[\w](?:[\w-]*[\w])?/,
+            message: this.$t('message.personal.mailForm'),
+            trigger: 'blur'
+          }
         ]
       }
     }
@@ -52,25 +94,39 @@ export default {
     async signUp () {
       // console.log(this.authInfo)
       let isSignUp = await this.checkInput()
-      if (!isSignUp) {
-        // 若不存在，登录注册信息
-        let id = await this.createAuthInfo()
-        await this.createStuInfo(id.insertId)
-        this.$message({
-          type: 'success',
-          message: '帐号生成成功，请登录'
-        })
-        this.$router.push('/login')
+      if (isSignUp === true) {
+        return false
       }
+      if (this.isVerifyEmail === false) {
+        this.$message({
+          type: 'error',
+          message: '邮箱未验证'
+        })
+        return false
+      } else if (this.authInfo.code !== this.validCode) {
+        this.$message({
+          type: 'error',
+          message: '验证码错误'
+        })
+        return false
+      }
+      // 若不存在，登录注册信息
+      let id = await this.createAuthInfo()
+      await this.createStuInfo(id.insertId)
+      this.$message({
+        type: 'success',
+        message: '帐号生成成功，请登录'
+      })
+      this.$router.push('/login')
     },
     createAuthInfo () {
       return new Promise((resolve, reject) => {
         let data = {
           _csrf: this.$cookies.get('csrfToken'),
           data: {
-            username: this.authInfo.username,
             password: this.authInfo.password,
-            realName: this.stuInfo.realName
+            realName: this.authInfo.realName,
+            email: this.verifiedEmail
           }
         }
         let sha1 = crypto.createHash('sha1')
@@ -88,7 +144,11 @@ export default {
         this.stuInfo.id = id
         let data = {
           _csrf: this.$cookies.get('csrfToken'),
-          data: this.stuInfo
+          data: {
+            'id': id,
+            'stuId': this.authInfo.stuId,
+            'realName': this.authInfo.realName
+          }
         }
         this.$api.post('stuInfos', data, res => {
           resolve(res)
@@ -101,20 +161,20 @@ export default {
       return new Promise((resolve, reject) => {
         this.$refs['authInfo'].validate(async (valid) => {
           if (valid) {
-            console.log(this.authInfo)
+            // console.log(this.authInfo)
             // 检查帐号是否存在
-            if (await this.checkUsername()) {
+            if (await this.checkEmail()) {
               this.$message({
                 type: 'warning',
-                message: this.stuInfo.username + '已注册，若不是本人，请及时联系管理员'
+                message: this.authInfo.email + '已注册，若不是本人，请及时联系管理员'
               })
               resolve(true)
-            } else if (await this.checkIdNumber()) {
+            /* } else if (await this.checkIdNumber()) {
               this.$message({
                 type: 'warning',
-                message: '身份证:' + this.stuInfo.idNumber + '，已注册，若不是本人，请及时联系管理员'
+                message: '学号:' + this.authInfo.stuId + '，已注册，若不是本人，请及时联系管理员'
               })
-              resolve(true)
+              resolve(true) */
             } else {
               resolve(false)
             }
@@ -122,10 +182,10 @@ export default {
         })
       })
     },
-    // 检查 auth 表中的 username 是否重复
-    checkUsername () {
+    // 检查 auth 表中的 email 是否重复
+    checkEmail () {
       return new Promise((resolve, reject) => {
-        let data = { 'username': this.authInfo.username }
+        let data = { 'email': this.authInfo.email }
         this.$api.get('authentications', data, res => {
           resolve(true)
         },
@@ -142,7 +202,7 @@ export default {
     checkIdNumber () {
       return new Promise((resolve, reject) => {
         // 检查帐号是否存在
-        let data = { 'idNumber': this.stuInfo.idNumber }
+        let data = { 'stuId': this.authInfo.stuId }
         this.$api.get('stuInfos', data, res => {
           resolve(true)
         },
@@ -155,8 +215,101 @@ export default {
         })
       })
     },
+    async verifyEmail () {
+      let reg = /[\w!#$%&'*+/=?^_`{|}~-]+(?:\.[\w!#$%&'*+/=?^_`{|}~-]+)*@(?:[\w](?:[\w-]*[\w])?\.)+[\w](?:[\w-]*[\w])?/
+      if (reg.test(this.authInfo.email)) {
+        if (await this.checkEmail()) {
+          this.$message({
+            type: 'warning',
+            message: this.authInfo.email + '已注册'
+          })
+          return false
+        }
+        await this.sendEmail()
+        this.isVerifyEmail = true
+        this.verifiedEmail = this.authInfo.email
+      } else {
+        this.$message({
+          type: 'warning',
+          message: this.authInfo.email + '不是正确的邮箱格式'
+        })
+      }
+    },
+    async sendEmail () {
+      return new Promise((resolve, reject) => {
+        // let id = ''
+        let data = {
+          _csrf: this.$cookies.get('csrfToken'),
+          // 此处需要注意的是 text和html均为邮件内容，
+          // 当html不为空时，text自动失效
+          data: {
+            indexStr: this.authInfo.email,
+            explainStr: 'signUp',
+            periodMinutes: 2880
+          }
+        }
+        this.$api.post('validStrs', data, res => {
+          // id = res.id
+          this.validCode = res.validStr
+          data = {
+            _csrf: this.$cookies.get('csrfToken'),
+            // 此处需要注意的是 text和html均为邮件内容，
+            // 当html不为空时，text自动失效
+            data: {
+              email: this.authInfo.email,
+              subject: 'Varification code for XJTLU OJ System',
+              text: 'this is the pure text',
+              html: 'Here is varification code<p href="color:red">' + res.validStr + '</p>'
+            }
+          }
+          this.$api.post('emails', data, res => {
+            this.$message({
+              type: 'success',
+              message: '邮件已发送'
+            })
+            // return validData
+          }, res => {
+            // reject(new Error('邮件发送失败'))
+            this.$message({
+              type: 'warning',
+              message: '邮件发送失败'
+            })
+            // console.log('邮件发送失败')
+          })
+          // console.log(this.validCode)
+          resolve(true)
+        }, async res => {
+          if (res.status === 500) {
+            reject(new Error('数据库错误'))
+            // console.log('数据库错误')
+          } else if (res.status === 403) {
+            // reject(new Error('验证码已存在'))
+            // console.log('验证码已存在')
+            await this.validator(res.data.detail.id)
+          } else {
+            // console.log('验证码发送错误')
+            reject(new Error('验证码发送错误'))
+          }
+        })
+      })
+    },
+    validator (id) {
+      return new Promise((resolve, reject) => {
+        this.$api.get('validStrs/' + id, null, res => {
+          this.validCode = res
+          this.$message({
+            type: 'warning',
+            message: '邮件之前已发送'
+          })
+          this.isVerifyEmail = true
+          resolve(true)
+        }, res => {
+          reject(new Error('服务器错误'))
+        })
+      })
+    },
     cancelSignUp () {
-      this.$emit('update:createShow', false)
+      this.$router.push('/login')
     },
     changeType () {
       if (this.registerPassword === 'password') {
@@ -212,6 +365,7 @@ export default {
       })
     }
   },
+  /*
   watch: {
     // chkInfoShow 与 chkInfoVisible 父子组件联动
     createShow: async function () {
@@ -233,6 +387,7 @@ export default {
     data: function () {
     }
   },
+  */
   computed: {
 
   }

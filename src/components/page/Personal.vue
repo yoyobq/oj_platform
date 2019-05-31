@@ -6,56 +6,59 @@
             </el-breadcrumb>
         </div>
         <div class="container">
-          <el-alert v-if="isGuest" :title="$t('message.personal.guestInfo')" type="error"></el-alert>
-          <el-alert v-if="permission.status === 'Teacher' && permission.module === undefined" :title="$t('message.personal.teacherInfo')" type="error"></el-alert>
+          <!--<el-alert v-if="isGuest" :title="$t('message.personal.guestInfo')" type="error"></el-alert>
+          <el-alert v-if="permission.status === 'Teacher' && permission.module === undefined" :title="$t('message.personal.teacherInfo')" type="error"></el-alert>-->
+
           <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="200px" size="medium" >
-              <el-form-item :label="$t('common.personal.myPermission')" prop="type">
-              <el-radio-group v-if="permission.status==='Guest'" v-model="ruleForm.type">
+            <!-- <el-form-item :label="$t('common.personal.myPermission')" prop="type">
+              <el-radio-group v-if="isGuest === false" v-model="ruleForm.type">
                 <el-radio-button label="Assitant" name="type" value="Assitant" border>{{$t('common.personal.assitant')}}</el-radio-button>
                 <el-radio-button label="Teacher" name="type" value="Teacher" border>{{$t('common.personal.teacher')}}</el-radio-button>
                 <el-radio-button v-if="ruleForm.type === 'Admin'" label="Admin" name="type" value="Admin" border>{{$t('common.personal.admin')}}</el-radio-button>
-                <!-- <el-radio-button label="Guest" name="type" value="Guest" border>访客</el-radio-button> -->
+                <el-radio-button label="Guest" name="type" value="Guest" border>访客</el-radio-button>
               </el-radio-group>
               <div v-else>{{ permission.status }}</div>
+            </el-form-item> -->
+            <el-form-item :label="$t('common.personal.stuId')" prop="stuId">
+              <div>{{ ruleForm.stuId }}</div>
             </el-form-item>
             <el-form-item :label="$t('common.personal.name')" prop="realName">
-              <el-input v-if="isGuest" v-model="ruleForm.realName" :placeholder="$t('message.personal.phName')"></el-input>
-              <div v-else>{{ ruleForm.realName }}</div>
+              <div>{{ ruleForm.realName }}</div>
             </el-form-item>
             <el-form-item v-if="ruleForm.type !== 'Teacher'" :label="$t('common.personal.degree')" prop="highestDegree">
               <!-- undergraduate, Master Student, PhD Student -->
               <el-select v-model="ruleForm.highestDegree" :placeholder="$t('message.personal.phDegree')">
-                <el-option :label="$t('common.personal.undergrauate')" value="undergraduate">{{ $t('common.personal.undergrauate') }}</el-option>
-                <el-option :label="$t('common.personal.masterStudent')" value="masterStudent">{{ $t('common.personal.masterStudent') }}</el-option>
-                <el-option :label="$t('common.personal.PhDStudent')" value="PhDStudent">{{ $t('common.personal.PhDStudent') }}</el-option>
+                <el-option :label="$t('common.personal.senior')" value="高中生">{{ $t('common.personal.senior') }}</el-option>
+                <el-option :label="$t('common.personal.undergrauate')" value="本科生">{{ $t('common.personal.undergrauate') }}</el-option>
+                <el-option :label="$t('common.personal.masterStudent')" value="研究生">{{ $t('common.personal.masterStudent') }}</el-option>
               </el-select>
             </el-form-item>
-            <el-form-item :label="$t('common.personal.department')" prop="department">
-              <el-autocomplete
-                class="inline-input"
-                v-model="ruleForm.department"
-                :fetch-suggestions="departmentSearch"
-                :placeholder="$t('message.personal.phDepartment')"
-              ></el-autocomplete>
+            <el-form-item :label="$t('common.personal.department')" prop="departmentName">
+              <el-select v-model="ruleForm.departmentName" :placeholder="$t('message.personal.phDepartment')">
+                <el-option label="CSSE" value="CSSE">CSSE</el-option>
+                <el-option label="EEE" value="EEE">EEE</el-option>
+                <el-option :label="$t('common.personal.other')" value="other">{{$t('common.personal.other')}}</el-option>
+              </el-select>
             </el-form-item>
             <el-form-item :label="$t('common.personal.school')" prop="school">
               <el-autocomplete 
                 v-model="ruleForm.school" 
                 :placeholder="$t('message.personal.phSchool')"
                 :fetch-suggestions="schoolSearch"
+                disabled
               ></el-autocomplete>
             </el-form-item>
             <el-form-item :label="$t('common.personal.eMail')" prop="email">
-              <el-input v-model="ruleForm.email" :placeholder="$t('message.personal.phEmail')"></el-input>
+              <div>{{ruleForm.email}}</div>
             </el-form-item>
-            <el-form-item :label="$t('common.personal.phone')" prop="cellphone">
+            <!--<el-form-item :label="$t('common.personal.phone')" prop="cellphone">
               <el-input v-model="ruleForm.cellphone" :placeholder="$t('message.personal.phCellPhone')"></el-input>
-            </el-form-item>
+            </el-form-item>-->
             <el-form-item>
-              <el-button @click="resetForm('ruleForm')">{{$t('common.personal.reset')}}</el-button>
+              <el-button @click="resetForm('ruleForm')" type="warning">{{$t('common.personal.reset')}}</el-button>
               <el-button v-if="isGuest" type="primary" @click="submitForm()">{{$t('common.personal.submit')}}</el-button>
               <template v-else>
-                <el-button type="warning" @click="submitForm()">{{$t('common.personal.modify')}}</el-button>
+                <el-button @click="submitForm()">{{$t('common.personal.save')}}</el-button>
                 <el-button type="primary" @click="changePass()">{{$t('common.personal.changePass')}}</el-button>
               </template>
             </el-form-item>
@@ -71,37 +74,44 @@ export default {
   data () {
     return {
       id: sessionStorage.getItem('id'),
-      permission: JSON.parse(sessionStorage.getItem('permission')),
-      isGuest: true,
-      isValid: false,
+      email: localStorage.getItem('email'),
+      validCode: '',
+      // permission: JSON.parse(sessionStorage.getItem('permission')),
+      permission: sessionStorage.getItem('permission'),
+      isGuest: false,
       ruleForm: {
+        stuId: '',
         realName: '',
         highestDegree: '',
-        department: '',
+        departmentName: '',
         type: '',
-        school: '',
+        school: '西交利物浦',
         email: '',
         cellphone: ''
       },
       rules: {
+        stuId: [
+          { required: false, message: this.$t('message.personal.inputName'), trigger: 'blur' },
+          { min: 2, max: 50, message: this.$t('message.personal.nameLength'), trigger: 'blur' }
+        ],
         realName: [
-          { required: true, message: this.$t('message.personal.inputName'), trigger: 'blur' },
+          { required: false, message: this.$t('message.personal.inputName'), trigger: 'blur' },
           { min: 2, max: 50, message: this.$t('message.personal.nameLength'), trigger: 'blur' }
         ],
         highestDegree: [
-          { required: true, message: this.$t('message.personal.phDegree'), trigger: 'change' }
+          { required: false, message: this.$t('message.personal.phDegree'), trigger: 'change' }
         ],
-        department: [
-          { required: true, message: this.$t('message.personal.phDepartment'), trigger: 'change' }
+        departmentName: [
+          { required: false, message: this.$t('message.personal.phDepartment'), trigger: 'change' }
         ],
         school: [
-          { required: true, message: this.$t('message.personal.phSchool'), trigger: 'change' }
+          { required: false, message: this.$t('message.personal.phSchool'), trigger: 'change' }
         ],
         type: [
-          { required: true, message: this.$t('message.personal.phType'), trigger: 'change' }
+          { required: false, message: this.$t('message.personal.phType'), trigger: 'change' }
         ],
         email: [
-          { required: true, message: this.$t('message.personal.phEmail'), trigger: 'blur' },
+          { required: false, message: this.$t('message.personal.phEmail'), trigger: 'blur' },
           {
             pattern: /[\w!#$%&'*+/=?^_`{|}~-]+(?:\.[\w!#$%&'*+/=?^_`{|}~-]+)*@(?:[\w](?:[\w-]*[\w])?\.)+[\w](?:[\w-]*[\w])?/,
             message: this.$t('message.personal.mailForm'),
@@ -121,20 +131,18 @@ export default {
     }
   },
   async created () {
-    if (this.permission.status !== 'Guest') {
-      this.ruleForm.realName = localStorage.getItem('pf_realName')
-      this.isGuest = false
-      await this.getPersonalData()
-      this.ruleForm.type = this.permission.status
-      // console.log(this.permission.status)
-      // console.log(this.ruleForm.type)
-    }
+    this.ruleForm.stuId = localStorage.getItem('stuId')
+    this.ruleForm.realName = localStorage.getItem('realName')
+    this.ruleForm.email = localStorage.getItem('email')
+    this.ruleForm.highestDegree = localStorage.getItem('eduBack')
+    this.ruleForm.departmentName = localStorage.getItem('departmentName')
+    // this.ruleForm.cellphone = localStorage.getItem('cellphone')
   },
   computed: {
   },
   methods: {
     getPersonalData () {
-      this.$api.get('api/v1/informations/' + this.id, null, res => {
+      this.$api.get('stuFullInfos/' + this.id, null, res => {
         // this.ruleForm.realName = localStorage.getItem('pf_realName')
         this.ruleForm.cellphone = res.cellphone
         this.ruleForm.department = res.department
@@ -148,39 +156,43 @@ export default {
       })
     },
     changePass () {
-      this.$prompt(this.$t('message.personal.inputOldPasswd'), this.$t('common.module.tips'), {
-        confirmButtonText: this.$t('common.module.confirm'),
-        cancelButtonText: this.$t('common.module.cancel'),
-        inputType: 'password'
-      }).then(({ value }) => {
-        let sha1 = crypto.createHash('sha1')
-        sha1.update(value)
-        value = sha1.digest('hex')
-        let data = {
-          id: this.id,
-          password: value
-        }
-        this.$api.get('api/v1/authentications/' + this.id, data, res => {
-          if (res.id === parseInt(this.id)) {
+      this.$confirm(this.$t('message.personal.verifyEmail'), '提示', {
+        confirmButtonText: '发送',
+        cancelButtonText: '取消',
+        closeOnClickModal: false
+      }).then(() => {
+        this.sendEmail()
+        // let reg = new RegExp('\\b' + this.validCode + '\\b')
+        this.$prompt(this.$t('message.personal.inputCode'), this.$t('common.module.tips'), {
+          confirmButtonText: this.$t('common.module.confirm'),
+          cancelButtonText: this.$t('common.module.cancel'),
+          closeOnClickModal: false,
+          inputPattern: /\w+/,
+          inputErrorMessage: '请输入验证码'
+        }).then(({ value }) => {
+          if (value === this.validCode) {
             this.$prompt(this.$t('message.personal.inputNewPasswd'), this.$t('common.module.tips'), {
               confirmButtonText: this.$t('common.module.confirm'),
               cancelButtonText: this.$t('common.module.cancel'),
-              inputType: 'password'
+              closeOnClickModal: false,
+              inputType: 'password',
+              inputPattern: /[\w!#$%&'*+/=?^_`{|}~-]+/,
+              inputErrorMessage: '请输入新密码'
             }).then(({ value }) => {
               let sha1 = crypto.createHash('sha1')
               sha1.update(value)
               value = sha1.digest('hex')
               let data = {
                 '_csrf': this.$cookies.get('csrfToken'),
-                params: {
+                'data': {
                   id: this.id,
                   password: value
                 }
               }
-              this.$api.put('api/v1/authentications/' + this.id, data, res => {
+              this.$api.put('authentications/' + this.id, data, res => {
                 this.$message({
                   type: 'success',
-                  message: this.$t('message.personal.changePassSucced')
+                  message: this.$t('message.personal.changePassSucceed')
                 })
                 sessionStorage.clear()
                 localStorage.clear()
@@ -194,15 +206,94 @@ export default {
             })
           } else {
             this.$message({
-              type: 'info',
-              message: this.$t('message.personal.wrongPassword')
+              type: 'warning',
+              message: '验证码错误'
             })
           }
+        }).catch(() => {
+          this.$message({
+            type: 'info',
+            message: '取消输入'
+          })
         })
       }).catch(() => {
         this.$message({
           type: 'info',
-          message: '取消输入'
+          message: '取消验证'
+        })
+      })
+    },
+    async sendEmail () {
+      return new Promise((resolve, reject) => {
+        // let id = ''
+        let data = {
+          _csrf: this.$cookies.get('csrfToken'),
+          // 此处需要注意的是 text和html均为邮件内容，
+          // 当html不为空时，text自动失效
+          data: {
+            indexStr: this.email,
+            explainStr: 'modifyPassword',
+            periodMinutes: 2880
+          }
+        }
+        this.$api.post('validStrs', data, res => {
+          // id = res.id
+          this.validCode = res.validStr
+          data = {
+            _csrf: this.$cookies.get('csrfToken'),
+            // 此处需要注意的是 text和html均为邮件内容，
+            // 当html不为空时，text自动失效
+            data: {
+              email: this.email,
+              subject: 'Varification code for XJTLU OJ System',
+              text: 'this is the pure text',
+              html: 'Here is varification code<p href="color:red">' + res.validStr + '</p>'
+            }
+          }
+          this.$api.post('emails', data, res => {
+            // console.log('邮件发送成功')
+            this.$message({
+              type: 'success',
+              message: '邮件发送成功'
+            })
+          }, res => {
+            // reject(new Error('邮件发送失败'))
+            // console.log('邮件发送失败')
+            this.$message({
+              type: 'warning',
+              message: '邮件发送失败'
+            })
+          })
+          // console.log(this.validCode)
+          resolve(true)
+        }, async res => {
+          if (res.status === 500) {
+            reject(new Error('数据库错误'))
+            // console.log('数据库错误')
+          } else if (res.status === 403) {
+            // reject(new Error('验证码已存在'))
+            console.log('验证码已存在')
+            await this.validator(res.data.detail.id)
+          } else {
+            // console.log('验证码发送错误')
+            reject(new Error('验证码发送错误'))
+          }
+        })
+      })
+    },
+    validator (id) {
+      return new Promise((resolve, reject) => {
+        this.$api.get('validStrs/' + id, null, res => {
+          this.validCode = res
+          // console.log(res)
+          this.$message({
+            type: 'warning',
+            message: '邮件之前已发送'
+          })
+          this.isVerifyEmail = true
+          resolve(true)
+        }, res => {
+          reject(new Error('服务器错误'))
         })
       })
     },
@@ -231,30 +322,55 @@ export default {
       })
     },
     async submitInfo () {
-      if (this.isGuest) {
-        if (this.ruleForm.realName === '访客' || this.ruleForm.realName === 'guest') {
-          this.$message({
-            type: 'warning',
-            message: this.$t('message.personal.realName')
-          })
-        } else {
-          await this.editName()
-          await this.editInfo()
-          await this.$message({
-            type: 'success',
-            message: this.$t('message.personal.reLogin')
-          })
-          localStorage.clear()
-          sessionStorage.clear()
-          this.$router.push('/login')
+      let departmentId = await this.getDepartmentId()
+      let data = {
+        _csrf: this.$cookies.get('csrfToken'),
+        // 'realName': this.ruleForm.realName,
+        data: {
+          'id': this.id,
+          'departmentId': departmentId,
+          // 'school': this.ruleForm.school,
+          'eduBack': this.ruleForm.highestDegree
+          // 'email': this.ruleForm.email,
+          // 'cellphone': this.ruleForm.cellphone
         }
-      } else {
-        this.editInfo()
+      }
+      // console.log(data)
+      this.$api.put('stuInfos/' + this.id, data, res => {
+        this.setLocalStorage()
         this.$message({
           type: 'success',
-          message: this.$t('message.personal.modifySuccess')
+          message: '个人信息修改成功！'
         })
-      }
+      }, res => {
+        this.$message({
+          type: 'error',
+          message: this.$t('message.personal.serverError')
+        })
+      })
+    },
+    setLocalStorage (stuInfo, authInfo) {
+      // localStorage.setItem('realName', this.ruleForm.realName)
+      // localStorage.setItem('stuId', this.ruleForm.stuId)
+      localStorage.setItem('departmentName', this.ruleForm.departmentName)
+      localStorage.setItem('eduBack', this.ruleForm.highestDegree)
+      // localStorage.setItem('email', this.ruleForm.email)
+    },
+    getDepartmentId () {
+      return new Promise((resolve, reject) => {
+        if (!this.ruleForm.departmentName) {
+          resolve(null)
+        } else {
+          let data = {
+            'departmentName': this.ruleForm.departmentName
+          }
+          this.$api.get('departments', data, res => {
+            resolve(res[0].id)
+          }, res => {
+            reject(new Error('获取系部信息出错'))
+          })
+        }
+      })
     },
     async editName () {
       let data = {
@@ -289,7 +405,7 @@ export default {
   },
   mounted () {
     this.departments = [{'value': 'CSSE'}, {'value': 'EEE'}]
-    this.schools = [{'value': 'XJTLU'}]
+    this.schools = [{'value': '西交利物浦'}]
   }
 }
 </script>

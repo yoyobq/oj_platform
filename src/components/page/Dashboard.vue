@@ -74,9 +74,9 @@
               </div>
               <el-table :data="eventList" :show-header="false" height="300" style="width: 100%;font-size:14px;" empty-text="幸苦了，你已经完成了所有任务，请明天再来看看">
                 <el-table-column width="40">
-                  <template slot-scope="scope">
+                  <!--<template slot-scope="scope">
                     <el-checkbox></el-checkbox>
-                  </template>
+                  </template>-->
                 </el-table-column>
                 <el-table-column>
                   <template slot-scope="scope" >

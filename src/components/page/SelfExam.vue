@@ -1,7 +1,7 @@
 <template>
   <div>
     <builder :builderShow="builderShow" @update:builderShow="builderShow = $event"  @examInfo="getExamInfo"></builder>
-    <div class="que-list" v-for="(quest, index) in questions" >
+    <div class="que-list" v-for="(quest, index) in questions" :key="index" >
       <div v-if="quest.quest_type === 'sin'">
         <sinChoice :quest="quest" :index="index" :answer="answerRecord[index]" @update:answer="changeAnswer($event,index)"></sinChoice>
       </div>
@@ -115,7 +115,7 @@ export default {
       this.questions = await this.getExamQuestions(this.examInfo.libId, this.examInfo.num)
       localStorage.setItem('self_exam_questions', JSON.stringify(this.questions))
       localStorage.setItem('self_exam_answerRecord', JSON.stringify(this.answerRecord))
-      // console.log(this.questions)
+      console.log(this.questions)
     }
   }
 }

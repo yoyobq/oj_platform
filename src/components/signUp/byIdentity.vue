@@ -18,11 +18,11 @@ export default {
       stuInfo: [],
       chkedInfo: null,
       chkInfoShow: false,
-      createShow: false
+      createShow: true
     }
   },
   created () {
-    this.checkId()
+    // this.checkId()
   },
   watch: {
     chkInfoShow: function () {

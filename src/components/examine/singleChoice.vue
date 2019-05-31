@@ -7,7 +7,7 @@
         </div>
       </div>
       <el-radio-group v-model="stuAnswer" @change="checkAnswer">
-        <div v-for='(option, optIndex) in options' > <!-- :key="index"> -->
+        <div v-for='(option, optIndex) in options' :key="optIndex"> <!-- :key="index"> -->
           <div v-if="option != null">
             <el-radio :label="optList[optIndex]" >
               {{ optList[optIndex] }}<div class="optText">{{ option }}</div>

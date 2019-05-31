@@ -1,7 +1,7 @@
 <template>
   <div class="sidebar">
     <el-menu class="sidebar-el-menu" :default-active="onRoutes" :collapse="collapse" background-color="#324157"
-      text-color="#bfcbd9" active-text-color="#20a0ff" unique-opened router>
+      text-color="#bfcbd9" active-text-color="#20a0ff" unique-opened router><!-- router: 是否使用 vue-router 的模式，启用该模式会在激活导航时以 index 作为 path 进行路由跳转 -->
       <template v-for="item in items">
         <template v-if="isShow(item.index)">
           <template v-if="item.subs">
@@ -71,6 +71,36 @@ export default {
           ]
         },
         {
+          icon: 'el-icon-edit',
+          index: '4',
+          title: '在线编程',
+          subs: [
+            {
+              index: 'codingQuestion',
+              title: '编程题列表'
+            },
+            {
+              index: 'codingRecord',
+              title: '答题汇总'
+            }
+          ]
+        },
+        {
+          icon: 'el-icon-tickets',
+          index: '2',
+          title: '教师出题',
+          subs: [
+            {
+              index: 'createQuestion',
+              title: '新建编程题'
+            },
+            {
+              index: 'createdQuestions',
+              title: '已创建题目'
+            }
+          ]
+        },
+        {
           icon: 'el-icon-setting',
           index: 'personal',
           title: '个人设置'
@@ -91,14 +121,23 @@ export default {
     // console.log(this.permission.status)
   },
   methods: {
-    isShow (page) {
+    isShow (index) {
       // switch (this.permission[page]) {
       //   case 'forbidden': return false
       //   case 'execute': return true
       //   case 'read': return true
       //   default: return false
       // }
-      return true
+
+      if (index === '2') {
+        if (sessionStorage.getItem('permissionId') === '2') {
+          return true
+        } else {
+          return false
+        }
+      } else {
+        return true
+      }
     }
   }
 }
