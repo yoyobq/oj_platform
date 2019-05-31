@@ -42,11 +42,13 @@ export default new Router({
         },
         {
           path: '/addTest',
+          name: 'addTest',
           component: resolve => require(['../components/page/AddTest.vue'], resolve),
           meta: { title: '添加测试代码' }
         },
         {
           path: '/createQuestion',
+          name: 'createQuestion',
           component: resolve => require(['../components/page/CreateQuestion.vue'], resolve),
           meta: { title: '新建编程题' }
         },

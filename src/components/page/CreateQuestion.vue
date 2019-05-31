@@ -61,7 +61,7 @@ export default {
         timeLimit: '',
         preCode: '',
         preFuncName: '',
-        uId: sessionStorage.getItem('id')
+        uId: ''
       },
       rules: {
         topic: [
@@ -103,14 +103,28 @@ export default {
     }
   },
   async created () {
-    if (this.$route.query.id) {
+    this.question.uId = sessionStorage.getItem('id')
+    if (this.$route.params.id) {
       this.isEdit = true
-      this.$api.get('codingQuestions/' + this.$route.query.id, null, res => {
+      this.$api.get('codingQuestions/' + this.$route.params.id, null, res => {
         this.question = res
       }, res => {})
     }
   },
   computed: {
+  },
+  watch: {
+    $route (to, from) {
+      this.question = {}
+      this.isEdit = false
+      this.question.uId = sessionStorage.getItem('id')
+      if (this.$route.params.id) {
+        this.isEdit = true
+        this.$api.get('codingQuestions/' + this.$route.params.id, null, res => {
+          this.question = res
+        }, res => {})
+      }
+    }
   },
   methods: {
     submitForm (formName) {

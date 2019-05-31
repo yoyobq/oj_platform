@@ -59,10 +59,23 @@ export default{
       console.log(`当前页: ${val}`)
     },
     edit (id) {
-      this.$router.push('/createQuestion?id=' + id)
+      this.$router.push({
+        name: 'createQuestion',
+        params: {
+          id: id
+        },
+        query: {
+          type: 'edit'
+        }
+      })
     },
     addTest (id) {
-      this.$router.push('/addTest?id=' + id)
+      this.$router.push({
+        name: 'addTest',
+        params: {
+          id: id
+        }
+      })
     }
   }
 }
