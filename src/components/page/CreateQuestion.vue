@@ -135,7 +135,7 @@ export default {
               '_csrf': this.$cookies.get('csrfToken'),
               'data': this.question
             }
-            this.$api.put('codingQuestions/' + this.$route.query.id, data, res => {
+            this.$api.put('codingQuestions/' + this.$route.params.id, data, res => {
               this.$router.push('/createdQuestions')
             }, res => {})
           } else {

@@ -90,7 +90,7 @@ export default {
       isEdit: false,
       programLang: '',
       uId: sessionStorage.getItem('id'),
-      cqId: this.$route.query.id,
+      cqId: this.$route.params.id,
       tpId: '',
       num: 1,
       id: '',

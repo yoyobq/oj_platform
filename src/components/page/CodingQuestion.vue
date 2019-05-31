@@ -1,15 +1,15 @@
 <template>
-  <div class="table">
+  <div class="codingQuestionTable">
     <div class="crumbs">
       <el-breadcrumb separator="/">
         <el-breadcrumb-item><i class="el-icon-edit"></i>{{$t('common.codingQuestion.title')}}</el-breadcrumb-item>
       </el-breadcrumb>
     </div>
-    <div class="container">
+    <div class="codingQuestionContainer">
       <el-table :data="tableData" style="width: 100%">
-        <el-table-column prop="id" label="编号" width="300">
+        <el-table-column prop="id" label="编号">
         </el-table-column>
-        <el-table-column label="题目" width="300">
+        <el-table-column label="题目">
           <template slot-scope="scope">
             <el-button type="text" @click="selectQuestion(scope.row.id)">{{ scope.row.topic }}</el-button>
           </template>
@@ -54,7 +54,12 @@ export default{
 }
 </script>
 <style>
-.container {
+.codingQuestionContainer {
   width: 60%;
+  width: 60%;
+  padding: 30px;
+  background: #fff;
+  border: 1px solid #ddd;
+  border-radius: 5px
 }
 </style>

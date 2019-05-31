@@ -1,15 +1,15 @@
 <template>
-  <div class="table">
+  <div class="codingRecordTable">
     <div class="crumbs">
       <el-breadcrumb separator="/">
         <el-breadcrumb-item><i class="el-icon-edit"></i>{{$t('common.codingRecord.title')}}</el-breadcrumb-item>
       </el-breadcrumb>
     </div>
-    <div class="container">
+    <div class="codingRecordContainer">
       <el-table :data="tableData" style="width: 100%">
-        <el-table-column prop="id" label="答题编号" width="300">
+        <el-table-column prop="id" label="答题编号">
         </el-table-column>
-        <el-table-column prop="topic" label="题目" width="300">
+        <el-table-column prop="topic" label="题目">
         </el-table-column>
         <el-table-column label="操作">
           <template slot-scope="scope">
@@ -86,8 +86,11 @@ export default{
 }
 </script>
 <style>
-.container {
-  min-width: 800px;
-  width: 900px;
+.codingRecordContainer {
+  width: 60%;
+  padding: 30px;
+  background: #fff;
+  border: 1px solid #ddd;
+  border-radius: 5px
 }
 </style>
