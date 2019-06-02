@@ -1,17 +1,17 @@
-# edu-platform #
-基于Vue.js 2.x系列 + Element UI 的后台管理系统解决方案前台部分。[内网地址](192.168.72.55)
+# oj-platform #
+基于Vue.js 2.x系列 + Element UI 的一个在线测试网站前台。
 
 ## 前言 ##
 首先要感谢分享vue，element，egg的团队，给了我们方便的轮子。然后要感谢lin-xin提供的vue + element整合方案，让我能快速搭建一个前台。
 
 ## 功能 ##
-- [x] 在校生根据身份证注册
+- [x] 注册
 - [x] 登录/注销
 - [x] 平台首页
 - [x] 题库一览
-- [x] 组卷自测
-- [x] 支持切换主题色
-- [x] 支持切换语言
+- [x] 教师出题
+- [x] 学生做题
+- [x] 查看做题情况
 - [x] 支持从后台获取的权限分配
 - [x] 404 / 403
 
@@ -42,8 +42,8 @@
 
 ## 安装步骤 ##
 
-	git clone https://github.com/yoyobq/edu_platform     // 把模板下载到本地
-	cd edu_paltform    // 进入模板目录
+	git clone https://github.com/361037067/oj_platform    // 把模板下载到本地
+	cd oj_paltform    // 进入模板目录
 	npm install        // 安装项目依赖，等待安装完成之后
 
 ## 本地开发 ##
