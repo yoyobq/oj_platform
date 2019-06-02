@@ -112,7 +112,7 @@ export default {
     // console.log('this is current editor object', this.editor)
   },
   created () {
-    this.cqId = this.$route.query.id
+    this.cqId = this.$route.params.id
     this.$api.get('codingQuestions/' + this.cqId, null, res => {
       this.topic = res.topic
       this.describe = res.describe

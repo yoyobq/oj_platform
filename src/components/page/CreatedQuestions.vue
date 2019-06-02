@@ -1,11 +1,11 @@
 <template>
-  <div class="table">
+  <div class="createQuestionsTable">
     <div class="crumbs">
       <el-breadcrumb separator="/">
         <el-breadcrumb-item><i class="el-icon-edit"></i>{{$t('common.createdQuestions.title')}}</el-breadcrumb-item>
       </el-breadcrumb>
     </div>
-    <div class="container">
+    <div class="createQuestionsContainer">
       <el-table :data="tableData" style="width: 100%">
         <el-table-column prop="id" label="编号">
         </el-table-column>
@@ -59,15 +59,33 @@ export default{
       console.log(`当前页: ${val}`)
     },
     edit (id) {
-      this.$router.push('/createQuestion?id=' + id)
+      this.$router.push({
+        name: 'createQuestion',
+        params: {
+          id: id
+        },
+        query: {
+          type: 'edit'
+        }
+      })
     },
     addTest (id) {
-      this.$router.push('/addTest?id=' + id)
+      this.$router.push({
+        name: 'addTest',
+        params: {
+          id: id
+        }
+      })
     }
   }
 }
 </script>
 <style>
-.container {
+.createQuestionsContainer {
+  width: 80%;
+  padding: 30px;
+  background: #fff;
+  border: 1px solid #ddd;
+  border-radius: 5px
 }
 </style>
