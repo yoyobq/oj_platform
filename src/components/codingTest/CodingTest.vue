@@ -9,27 +9,46 @@
       <div class="topic" >{{topic}}</div>
       <div class="describe" >{{describe}}</div>
       <div class="hint" >{{hint}}</div>
-        <codemirror :value="preCode"
+        <codemirror class="codemirror" :value="preCode"
                     :options="editorOption"
                     ref="myEditor">
                     <!-- @change="yourCodeChangeMethod"> -->
         ></codemirror>
-      <el-button type="primary" @click="saveAndRun">Save & Run</el-button>
+        <div class="leftPart">
+          <vtitle></vtitle>
+          <testcase></testcase>
+        </div>
+      <el-button type="success" @click="save">Save Code</el-button>
+      <el-button type="primary" @click="run">Submit and Run</el-button>
+      <el-button @click="cancel">Cancel</el-button>
     </div>
 </template>
 
 <script>
 import { codemirror } from 'vue-codemirror-lite'
+/* import code from './components/Code'
+import error from './components/Error'
+import info from './components/Info'
+import result from './components/Result'
+import testcase from './components/TestCase'
+import vtitle from './components/Title' */
 require('codemirror/mode/javascript/javascript')
 // require('codemirror/mode/vue/vue')
 require('codemirror/addon/hint/show-hint.js') // 提供autocomple的完整框架
 require('codemirror/addon/hint/show-hint.css')
 require('codemirror/addon/hint/javascript-hint.js')
+
 export default {
-  componets: {
-    codemirror
+  name: 'codingTest',
+  components: {
+    codemirror,
+    'code': resolve => { require(['./components/Code.vue'], resolve) },
+    'error': resolve => { require(['./components/Error.vue'], resolve) },
+    'info': resolve => { require(['./components/Info.vue'], resolve) },
+    'result': resolve => { require(['./components/Result.vue'], resolve) },
+    'testcase': resolve => { require(['./components/TestCase.vue'], resolve) },
+    'vtitle': resolve => { require(['./components/Title.vue'], resolve) }
   },
-  name: 'codeMirrorTest',
   data () {
     return {
       cqId: '',
@@ -56,9 +75,44 @@ export default {
     }
   },
   methods: {
-    async saveAndRun () {
+    async save () {
       await this.saveCodingRecord()
       await this.createFile()
+    },
+    run () {
+      let data = {
+        '_csrf': this.$cookies.get('csrfToken'),
+        'data': {
+          cqId: this.cqId,
+          uId: sessionStorage.getItem('id')
+        }
+      }
+      this.$api.post('judge', data, res => {
+        let msg = JSON.parse(res.stdout)
+        if (msg.errMsg !== undefined) {
+          this.$alert(msg.errMsg, this.$t('message.codingTest.testError'), {
+            confirmButtonText: '确定'
+          })
+        } else {
+          if (msg.rightNum === msg.testcasesLength) {
+            const solveDate = this.$moment(new Date()).format('YYYY-MM-DD HH:mm:ss')
+            let data = {
+              '_csrf': this.$cookies.get('csrfToken'),
+              'data': {
+                solveDate,
+                status: 'done'
+              }
+            }
+            this.$api.put('codingRecords/' + this.crId, data, res => {}, res => {})
+          }
+          this.$alert(this.$t('message.codingTest.correctRate') + ': ' + msg.rightNum / msg.testcasesLength * 100 + '%\n' +
+          this.$t('message.codingTest.time') + ': ' + msg.totalTime + 'ms', this.$t('message.codingTest.testResult'), {
+            confirmButtonText: '确定'
+          })
+        }
+      }, res => {
+        console.log(res.data)
+      })
     },
     saveCodingRecord () {
       return new Promise((resolve, reject) => {
@@ -99,6 +153,9 @@ export default {
           resolve(false)
         })
       })
+    },
+    cancel () {
+      this.$router.push('/codingQuestion')
     }
   },
   computed: {
@@ -112,7 +169,7 @@ export default {
     // console.log('this is current editor object', this.editor)
   },
   created () {
-    this.cqId = this.$route.params.id
+    this.cqId = this.$route.query.id
     this.$api.get('codingQuestions/' + this.cqId, null, res => {
       this.topic = res.topic
       this.describe = res.describe
@@ -148,7 +205,10 @@ export default {
 <style scoped>
   .code-area{
     position: relative;
-    left: 100px;
+    left: 20px;
     top: 20px;
+  }
+  .leftPart{
+    width:20%;
   }
 </style>

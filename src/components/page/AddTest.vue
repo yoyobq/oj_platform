@@ -10,6 +10,7 @@
       <el-form :model="test" :rules="rules" ref="test" label-width="200px" size="medium" >
         <el-form-item :label="$t('common.addTest.topic')">
           {{test.topic}}
+          <el-switch style="display: block" v-model="auto" active-color="#13ce66" inactive-color="#ff4949" :active-text="$t('common.addTest.byHand')" :inactive-text="$t('common.addTest.auto')"></el-switch>
         </el-form-item>
         <el-form-item :key="i" v-for="i in num" :label="$t('common.addTest.data')+i">
           <el-select v-model="test.inputDataStructure" :placeholder="$t('common.addTest.inputDataStructure')" @change="changeInput()">
@@ -31,7 +32,10 @@
           </el-select>
           <el-input v-model="test.outputData[i-1]" :placeholder="outputPlaceHolder"></el-input>
         </el-form-item>
-        <el-form-item>
+        <el-form-item v-if="auto" :label="$t('common.addTest.buildingCode')">
+          <el-input type="textarea" :autosize="{ minRows: 4, maxRows: 7}" v-model="test.buildingCode"></el-input>
+        </el-form-item>
+        <el-form-item v-if="!auto">
           <el-button icon="el-icon-plus" size="mini" type="danger" @click="addOneRow()" round></el-button>
           <el-button icon="el-icon-minus" size="mini" type="danger" @click="minusOneRow()" round></el-button>
         </el-form-item>
@@ -75,7 +79,9 @@ export default {
         inputDataStructure: '',
         outputDataStructure: '',
         testCode: '',
-        programLang: ''
+        programLang: '',
+        buildingCode: '',
+        isAutoBuild: 0
       },
       rules: {
         topic: [],
@@ -98,7 +104,8 @@ export default {
       outputPlaceHolder: '',
       currentRow: null,
       submitInput: [],
-      submitOutput: []
+      submitOutput: [],
+      auto: false
     }
   },
   async created () {
@@ -112,8 +119,8 @@ export default {
           this.$api.get('testPrograms/' + this.tpId, null, res => {
             this.test.inputDataStructure = res.inputDataStructure
             this.test.outputDataStructure = res.outputDataStructure
-            this.test.testCode = res.testCode
-            this.changeinput()
+            // this.test.testCode = res.testCode
+            this.changeInput()
             this.changeOutput()
             for (let i in this.testPrograms) {
               if (this.tpId === this.testPrograms[i].id) {
@@ -187,12 +194,36 @@ export default {
                 break
             } */
           }
-          this.num = this.test.inputData.length
+          if (this.test.inputData.length > 0) {
+            this.num = this.test.inputData.length
+          } else {
+            this.num = 1
+          }
+          this.test.isAutoBuild = res[0].isAutoBuild
+          if (this.test.isAutoBuild === 1) {
+            this.auto = true
+          }
+          this.test.buildingCode = res[0].buildingCode
         }, res => {})
       }, res => {})
     }, res => {})
   },
   computed: {
+  },
+  watch: {
+    auto: function (val) {
+      if (val === true) {
+        this.num = 0
+        this.test.isAutoBuild = 1
+      } else {
+        this.test.isAutoBuild = 0
+        if (this.test.inputData.length > 0) {
+          this.num = this.test.inputData.length
+        } else {
+          this.num = 1
+        }
+      }
+    }
   },
   methods: {
     saveForm (formName) {
@@ -220,9 +251,11 @@ export default {
               this.test.outputData.splice(i, 1)
             }
           }
+          let inputData = []
+          let outputData = []
           for (let i in this.test.inputData) {
-            this.test.inputData[i] = JSON.parse(this.test.inputData[i])
-            this.test.outputData[i] = JSON.parse(this.test.outputData[i])
+            inputData[i] = JSON.parse(this.test.inputData[i])
+            outputData[i] = JSON.parse(this.test.outputData[i])
           }
           /* switch (this.test.inputDataStructure) {
             case 'value':
@@ -280,9 +313,11 @@ export default {
             let data = {
               '_csrf': this.$cookies.get('csrfToken'),
               'data': {
-                inputData: JSON.stringify(this.test.inputData),
-                outputData: JSON.stringify(this.test.outputData),
-                status: 'done'
+                inputData: JSON.stringify(inputData),
+                outputData: JSON.stringify(outputData),
+                status: 'done',
+                isAutoBuild: this.test.isAutoBuild,
+                buildingCode: this.test.buildingCode
               }
             }
             this.$api.put('testcases/' + this.id, data, res => {
@@ -312,9 +347,11 @@ export default {
               '_csrf': this.$cookies.get('csrfToken'),
               'data': {
                 cqId: this.cqId,
-                inputData: JSON.stringify(this.test.inputData),
-                outputData: JSON.stringify(this.test.outputData),
-                status: 'done'
+                inputData: JSON.stringify(inputData),
+                outputData: JSON.stringify(outputData),
+                status: 'done',
+                isAutoBuild: this.test.isAutoBuild,
+                buildingCode: this.test.buildingCode
               }
             }
             this.$api.post('testcases', data, res => {
@@ -381,13 +418,17 @@ export default {
     minusOneRow () {
       if (this.num > 1) {
         this.num--
-        this.test.inputData.pop()
-        this.test.outputData.pop()
+        if (this.test.inputData.length > this.num) {
+          this.test.inputData.pop()
+          this.test.outputData.pop()
+        }
       }
     },
     changeInput () {
       switch (this.test.inputDataStructure) {
         case 'array': this.inputPlaceHolder = '[1,2,3]'
+          break
+        case 'value': this.inputPlaceHolder = '1'
       }
       if (this.currentRow !== null) {
         if (this.test.inputDataStructure !== this.currentRow.inputDataStructure) {
@@ -403,6 +444,9 @@ export default {
     changeOutput () {
       switch (this.test.outputDataStructure) {
         case 'value': this.outputPlaceHolder = '1'
+          break
+        case 'array': this.outputPlaceHolder = '[1,2,3]'
+          break
       }
       if (this.currentRow !== null) {
         if (this.test.outputDataStructure !== this.currentRow.outputDataStructure) {

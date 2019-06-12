@@ -11,6 +11,8 @@
         </el-table-column>
         <el-table-column prop="topic" label="题目">
         </el-table-column>
+        <el-table-column prop="status" label="状态">
+        </el-table-column>
         <el-table-column label="操作">
           <template slot-scope="scope">
             <el-button
@@ -55,8 +57,7 @@ export default{
   },
   methods: {
     checkCoding (row) {
-      this.code = row.code
-      this.visible = true
+      this.$router.push('/codingTest?id=' + row.cqId)
     },
     handleCurrentChange (val) {
       console.log(`当前页: ${val}`)

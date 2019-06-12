@@ -85,7 +85,8 @@
       "submit": "提交",
       "title": "新建编程题",
       "editTitle": "修改编程题",
-      "cancel": "取消"
+      "cancel": "取消",
+      "hiddenCode": "隐藏的预置代码"
     },
     "createdQuestions": {
       "title": "已创建题目",
@@ -100,7 +101,10 @@
       "data": "输入输出",
       "save": "保存",
       "createFile": "创建测试文件",
-      "testProgram": "请选择判题程序代码"
+      "testProgram": "请选择判题程序代码",
+      "byHand": "手动输入",
+      "auto": "自动生成",
+      "buildingCode": "自动生成用例代码"
     },
     "module": {
       "module": "课程总览",
@@ -225,7 +229,11 @@
       "changePassSucceed": "修改密码成功"
     },
     "codingTest": {
-      "createFileSucceed":"创建文件成功"
+      "createFileSucceed":"创建文件成功",
+      "testError": "代码运行出错",
+      "testResult": "测试结果",
+      "correctRate": "正确率",
+      "time": "执行时间"
     },
     "createQuestion": {
       "inputTopic": "请输入标题",

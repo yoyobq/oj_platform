@@ -40,6 +40,9 @@
         <el-form-item :label="$t('common.createQuestion.preFuncName')" prop="preFuncName">
           <el-input v-model="question.preFuncName"></el-input>
         </el-form-item>
+        <el-form-item :label="$t('common.createQuestion.hiddenCode')" prop="hiddenCode">
+          <el-input v-model="question.hiddenCode"></el-input>
+        </el-form-item>
         <el-form-item>
           <el-button type="primary" @click="submitForm('question')">{{$t('common.createQuestion.submit')}}</el-button>
           <el-button @click="cancel()">{{$t('common.createQuestion.cancel')}}</el-button>
@@ -61,7 +64,8 @@ export default {
         timeLimit: '',
         preCode: '',
         preFuncName: '',
-        uId: ''
+        uId: '',
+        hiddenCode: ''
       },
       rules: {
         topic: [

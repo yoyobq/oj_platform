@@ -47,11 +47,24 @@ export default{
     let data = {
       uId: sessionStorage.getItem('id')
     }
-    this.$api.get('codingQuestions', data, res => {
-      this.tableData = res
-    }, res => {})
+    this.$api.get('codingQuestions/count', data, res => {
+      this.pageCount = res
+      this.getQuestions(0)
+    }, res => {
+      console.log(res.data)
+    })
   },
   methods: {
+    getQuestions (page) {
+      let data = {
+        uId: sessionStorage.getItem('id'),
+        limit: 10,
+        offset: page
+      }
+      this.$api.get('codingQuestions', data, res => {
+        this.tableData = res
+      }, res => {})
+    },
     selectQuestion (id) {
       this.$router.push('/codingTest?id=' + id)
     },
