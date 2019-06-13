@@ -46,3 +46,8 @@ export default {
   }
 }
 </script>
+<style>
+  .content{
+    height: 90%;
+  }
+</style>

@@ -68,7 +68,8 @@
       "title": "编程题列表"
     },
     "codingTest": {
-      "title": "编程测试"
+      "title": "编程测试",
+      "unLimited": "无限制"
     },
     "codingRecord": {
       "title": "答题汇总"
@@ -233,7 +234,10 @@
       "testError": "代码运行出错",
       "testResult": "测试结果",
       "correctRate": "正确率",
-      "time": "执行时间"
+      "time": "执行时间",
+      "message": "提示",
+      "addNewRecord": "该题已解答完成，是否另创建一份做题记录？",
+      "statusDone": "是否需要结束本次做题"
     },
     "createQuestion": {
       "inputTopic": "请输入标题",

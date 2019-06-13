@@ -6,21 +6,23 @@
         <el-breadcrumb-item>{{$t('common.codingTest.title')}}</el-breadcrumb-item>
       </el-breadcrumb>
       </div>
-      <div class="topic" >{{topic}}</div>
-      <div class="describe" >{{describe}}</div>
-      <div class="hint" >{{hint}}</div>
-        <codemirror class="codemirror" :value="preCode"
-                    :options="editorOption"
-                    ref="myEditor">
-                    <!-- @change="yourCodeChangeMethod"> -->
-        ></codemirror>
-        <div class="leftPart">
-          <vtitle></vtitle>
-          <testcase></testcase>
-        </div>
-      <el-button type="success" @click="save">Save Code</el-button>
-      <el-button type="primary" @click="run">Submit and Run</el-button>
-      <el-button @click="cancel">Cancel</el-button>
+      <el-row>
+      <el-col class="leftPart">
+        <vtitle :topic="topic" :describe="describe" :hint="hint"></vtitle>
+        <testcase :cqId="cqId"></testcase>
+      </el-col>
+      <el-col class="middlePart">
+        <vcode :editorOption="editorOption" :preCode="preCode" ref="myCode"></vcode>
+        <!--<el-button @click="cancel">Cancel</el-button>-->
+        <el-button type="primary" @click="run">Submit and Run</el-button>
+        <el-button type="success" @click="save">Save Code</el-button>
+      </el-col>
+      <el-col class="rightPart">
+        <info :submitCount="submitCount" :timeLimit="timeLimit" :memLimit="memLimit" :minTime="minTime" :minMem="minMem" :startDate="startDate"></info>
+        <error :errMsg="errMsg"></error>
+        <result :correctRate="correctRate" :realTime="realTime" :realMem="realMem"></result>
+      </el-col>
+      </el-row>
     </div>
 </template>
 
@@ -42,7 +44,7 @@ export default {
   name: 'codingTest',
   components: {
     codemirror,
-    'code': resolve => { require(['./components/Code.vue'], resolve) },
+    'vcode': resolve => { require(['./components/Code.vue'], resolve) },
     'error': resolve => { require(['./components/Error.vue'], resolve) },
     'info': resolve => { require(['./components/Info.vue'], resolve) },
     'result': resolve => { require(['./components/Result.vue'], resolve) },
@@ -71,7 +73,17 @@ export default {
         extraKeys: {'Ctrl-.': 'autocomplete'}
       },
       preCode: '',
-      crId: ''
+      crId: '',
+      submitCount: 0,
+      timeLimit: null,
+      memLimit: null,
+      realTime: null,
+      realMem: null,
+      startDate: '',
+      errMsg: '',
+      correctRate: '',
+      minTime: 0,
+      minMem: 0
     }
   },
   methods: {
@@ -79,7 +91,10 @@ export default {
       await this.saveCodingRecord()
       await this.createFile()
     },
-    run () {
+    async run () {
+      await this.saveCodingRecord()
+      await this.createFile()
+      this.submitCount++
       let data = {
         '_csrf': this.$cookies.get('csrfToken'),
         'data': {
@@ -90,28 +105,47 @@ export default {
       this.$api.post('judge', data, res => {
         let msg = JSON.parse(res.stdout)
         if (msg.errMsg !== undefined) {
-          this.$alert(msg.errMsg, this.$t('message.codingTest.testError'), {
-            confirmButtonText: '确定'
+          this.errMsg = msg.errMsg
+          this.$message({
+            type: 'error',
+            message: this.$t('message.codingTest.testError')
           })
         } else {
-          if (msg.rightNum === msg.testcasesLength) {
-            const solveDate = this.$moment(new Date()).format('YYYY-MM-DD HH:mm:ss')
-            let data = {
-              '_csrf': this.$cookies.get('csrfToken'),
-              'data': {
-                solveDate,
-                status: 'done'
-              }
-            }
-            this.$api.put('codingRecords/' + this.crId, data, res => {}, res => {})
+          this.errMsg = null
+          this.correctRate = msg.rightNum / msg.testcasesLength * 100 + '%'
+          this.realTime = msg.totalTime
+          if (this.minTime === null) {
+            this.minTime = this.realTime
+          } else if (this.minTime > this.realTime) {
+            this.minTime = this.realTime
           }
           this.$alert(this.$t('message.codingTest.correctRate') + ': ' + msg.rightNum / msg.testcasesLength * 100 + '%\n' +
           this.$t('message.codingTest.time') + ': ' + msg.totalTime + 'ms', this.$t('message.codingTest.testResult'), {
-            confirmButtonText: '确定'
+            confirmButtonText: '确定',
+            callback: action => {
+              if (this.correctRate === '100%') {
+                this.$confirm(this.$t('message.codingTest.statusDone'), this.$t('message.codingTest.message'), {
+                  confirmButtonText: '确定',
+                  cancelButtonText: '取消',
+                  type: 'warning'
+                }).then(() => {
+                  this.statusDone()
+                  this.$router.push('codingQuestion')
+                }).catch(() => {
+                })
+              }
+            }
           })
         }
       }, res => {
-        console.log(res.data)
+        this.errMsg = res.data.error
+        this.correctRate = ''
+        this.realTime = null
+        this.realMem = null
+        this.$message({
+          type: 'error',
+          message: this.$t('message.codingTest.testError')
+        })
       })
     },
     saveCodingRecord () {
@@ -120,7 +154,7 @@ export default {
         let data = {
           '_csrf': this.$cookies.get('csrfToken'),
           'data': {
-            code: this.editor.doc.getValue(),
+            code: this.$refs.myCode.editor.doc.getValue(),
             solveDate: solveDate
           }
         }
@@ -156,16 +190,22 @@ export default {
     },
     cancel () {
       this.$router.push('/codingQuestion')
+    },
+    statusDone () {
+      let data = {
+        '_csrf': this.$cookies.get('csrfToken'),
+        'data': {
+          status: 'done'
+        }
+      }
+      this.$api.put('codingRecords/' + this.crId, data, res => {}, res => {})
     }
   },
   computed: {
-    editor () {
-      // 获得现有的 editor 对象
-      return this.$refs.myEditor.editor
-    }
+  },
+  watch: {
   },
   mounted () {
-    this.editor.focus()
     // console.log('this is current editor object', this.editor)
   },
   created () {
@@ -175,6 +215,16 @@ export default {
       this.describe = res.describe
       this.hint = res.hint
       this.preCode = res.preCode
+      if (res.timeLimit === 0) {
+        this.timeLimit = this.$t('common.codingTest.unLimited')
+      } else {
+        this.timeLimit = res.timeLimit + 'ms'
+      }
+      if (res.memLimit === 0) {
+        this.memLimit = this.$t('common.codingTest.unLimited')
+      } else {
+        this.memLimit = res.memLimit + 'kb'
+      }
     }, res => {})
     const startDate = this.$moment(new Date()).format('YYYY-MM-DD HH:mm:ss')
     let data = {
@@ -187,15 +237,58 @@ export default {
     }
     this.$api.post('codingRecords', data, res => {
       this.crId = res
+      this.startDate = new Date(startDate).toLocaleString()
     }, res => {
       let data = {
         uId: sessionStorage.getItem('id'),
         cqId: this.cqId
       }
       this.$api.get('codingRecords', data, res => {
-        this.crId = res[0].id
-        if (res[0].code !== null) {
-          this.preCode = res[0].code
+        let index = ''
+        for (let i in res) {
+          if (res[i].status === 'unsolved') {
+            this.crId = res[i].id
+            this.startDate = new Date(res[i].startDate).toLocaleString()
+            if (res[i].code !== null) {
+              this.preCode = res[i].code
+            }
+            break
+          } else if (res[i].status === 'done') {
+            index = i
+          }
+        }
+        if (this.crId === '') {
+          this.$confirm(this.$t('message.codingTest.addNewRecord'), this.$t('message.codingTest.message'), {
+            confirmButtonText: '确定',
+            cancelButtonText: '取消'
+          }).then(() => {
+            let data = {
+              '_csrf': this.$cookies.get('csrfToken'),
+              'data': {
+                status: 'ignore'
+              }
+            }
+            // console.log(this.editor.doc.getValue())
+            // console.log(data)
+            this.$api.put('codingRecords/' + res[index].id, data, res => {
+            }, res => {
+            })
+            const startDate = this.$moment(new Date()).format('YYYY-MM-DD HH:mm:ss')
+            data = {
+              '_csrf': this.$cookies.get('csrfToken'),
+              'data': {
+                uId: sessionStorage.getItem('id'),
+                cqId: this.cqId,
+                startDate
+              }
+            }
+            this.$api.post('codingRecords', data, res => {
+              this.crId = res
+              this.startDate = new Date(startDate).toLocaleString()
+            }, res => {})
+          }).catch(() => {
+            this.$router.go(-1)
+          })
         }
       }, res => {})
     })
@@ -204,11 +297,31 @@ export default {
 </script>
 <style scoped>
   .code-area{
-    position: relative;
     left: 20px;
     top: 20px;
+    height: 100%
   }
   .leftPart{
-    width:20%;
+    width:25%;
+    height: 100%;
+    padding: 1%;
+  }
+  .middlePart{
+    width:50%;
+    height: 100%;
+    padding: 1%;
+  }
+  .rightPart{
+    width:25%;
+    height: 100%;
+    padding: 1%;
+  }
+  .el-row{
+    height: 100%;
+  }
+  .el-button{
+    margin:20px;
+    float: right;
+    margin-right: 20px;
   }
 </style>

@@ -17,6 +17,10 @@
           <template slot-scope="scope">
             <el-button
               size="mini"
+              v-if="scope.row.status==='unsolved'"
+              @click="contCoding(scope.row)">继续编程</el-button>
+              <el-button size="mini"
+              v-else
               @click="checkCoding(scope.row)">查看代码</el-button>
           </template>
         </el-table-column>
@@ -56,8 +60,14 @@ export default{
     this.tableData = record
   },
   methods: {
-    checkCoding (row) {
+    contCoding (row) {
       this.$router.push('/codingTest?id=' + row.cqId)
+    },
+    checkCoding (row) {
+      this.$alert('<PRE>' + row.code + '</PRE>', '查看代码', {
+        confirmButtonText: '确定',
+        dangerouslyUseHTMLString: true
+      })
     },
     handleCurrentChange (val) {
       console.log(`当前页: ${val}`)
