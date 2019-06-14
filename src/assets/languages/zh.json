@@ -109,7 +109,8 @@
     },
     "recordForTeacher": {
       "onlyDone": "仅查看已完成记录",
-      "searchQuestion": "搜索题目标题"
+      "searchQuestion": "搜索题目标题",
+      "title": "查看学生代码"
     },
     "module": {
       "module": "课程总览",

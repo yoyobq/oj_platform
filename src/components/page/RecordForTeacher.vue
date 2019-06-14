@@ -2,7 +2,7 @@
   <div class="codingRecordTable">
     <div class="crumbs">
       <el-breadcrumb separator="/">
-        <el-breadcrumb-item><i class="el-icon-edit"></i>{{$t('common.codingRecord.title')}}</el-breadcrumb-item>
+        <el-breadcrumb-item><i class="el-icon-edit"></i>{{$t('common.recordForTeacher.title')}}</el-breadcrumb-item>
       </el-breadcrumb>
     </div>
     <div class="codingRecordContainer">
@@ -11,17 +11,45 @@
         <el-button slot="append" icon="el-icon-search" @click="search"></el-button>
       </el-input>
       <el-table :data="tableData" :default-sort = "{prop: 'id', order: 'ascending'}">
-        <el-table-column prop="id" label="答题编号" sortable width="140%">
+        <el-table-column width="140%">
+          <template slot="header" slot-scope="scope">
+            <el-button type="text"
+            @click="sortId()">答题编号<span class="el-icon-d-caret"></span></el-button>
+          </template>
+          <template slot-scope="scope">
+            {{scope.row.id}}
+          </template>
         </el-table-column>
         <el-table-column prop="realName" label="学生姓名">
         </el-table-column>
         <el-table-column prop="topic" label="题目">
         </el-table-column>
-        <el-table-column prop="memUsage" label="内存(kb)" sortable>
+        <el-table-column>
+          <template slot="header" slot-scope="scope">
+            <el-button type="text"
+            @click="sortMem()">内存<span class="el-icon-d-caret"></span></el-button>
+          </template>
+          <template slot-scope="scope">
+            {{scope.row.memUsage}}
+          </template>
         </el-table-column>
-        <el-table-column prop="timeUsage" label="时间(ms)" sortable>
+        <el-table-column>
+          <template slot="header" slot-scope="scope">
+            <el-button type="text"
+            @click="sortTime()">时间<span class="el-icon-d-caret"></span></el-button>
+          </template>
+          <template slot-scope="scope">
+            {{scope.row.timeUsage}}
+          </template>
         </el-table-column>
-        <el-table-column prop="solveDate" label="完成时间" sortable>
+        <el-table-column>
+          <template slot="header" slot-scope="scope">
+            <el-button type="text"
+            @click="sortDate()">完成时间<span class="el-icon-d-caret"></span></el-button>
+          </template>
+          <template slot-scope="scope">
+            {{scope.row.solveDate}}
+          </template>
         </el-table-column>
         <el-table-column prop="status" label="状态">
         </el-table-column>
@@ -36,6 +64,7 @@
         :page-size="pageSize"
         layout="prev, pager, next"
         :total="total"
+        :current-page="currentPage"
         @current-change="currentChange">
       </el-pagination>
     </div>
@@ -62,7 +91,13 @@ export default{
       record: [],
       searchInput: '',
       total: 10,
-      pageSize: 10
+      pageSize: 10,
+      currentPage: 1,
+      sortType: 'id',
+      sId: false,
+      sMem: false,
+      sTime: false,
+      sDate: false
     }
   },
   async created () {
@@ -90,6 +125,7 @@ export default{
         item.solveDate = 'not done'
       }
     }
+    this.totalTableData = this.record.concat()
     this.tableData = this.record.slice(0, this.pageSize).concat()
   },
   watch: {
@@ -108,6 +144,16 @@ export default{
             this.totalTableData.push(this.record[i])
           }
         }
+      }
+      switch (this.sortType) {
+        case 'id': this.sortId()
+          break
+        case 'mem': this.sortMem()
+          break
+        case 'time': this.sortTime()
+          break
+        case 'date': this.sortDate()
+          break
       }
       this.total = this.totalTableData.length
       this.tableData = this.totalTableData.slice(0, this.pageSize).concat()
@@ -166,7 +212,119 @@ export default{
       this.tableData = this.totalTableData.slice(0, this.pageSize).concat()
     },
     currentChange (val) {
-      this.tableData = this.totalTableData.slice((val - 1) * 10, (val - 1) * 10 + 9).concat()
+      this.tableData = this.totalTableData.slice((val - 1) * 10, (val - 1) * 10 + 10).concat()
+    },
+    sortId () {
+      this.sortType = 'id'
+      let copy = []
+      if (this.sId) {
+        for (let i = 0; i < this.totalTableData.length - 1; i++) {
+          for (let j = i + 1; j < this.totalTableData.length; j++) {
+            if (this.totalTableData[i].id > this.totalTableData[j].id) {
+              copy = JSON.parse(JSON.stringify(this.totalTableData[i]))
+              this.totalTableData[i] = JSON.parse(JSON.stringify(this.totalTableData[j]))
+              this.totalTableData[j] = JSON.parse(JSON.stringify(copy))
+            }
+          }
+        }
+        this.sId = false
+      } else {
+        for (let i = 0; i < this.totalTableData.length - 1; i++) {
+          for (let j = i + 1; j < this.totalTableData.length; j++) {
+            if (this.totalTableData[i].id < this.totalTableData[j].id) {
+              copy = JSON.parse(JSON.stringify(this.totalTableData[i]))
+              this.totalTableData[i] = JSON.parse(JSON.stringify(this.totalTableData[j]))
+              this.totalTableData[j] = JSON.parse(JSON.stringify(copy))
+            }
+          }
+        }
+        this.sId = true
+      }
+      this.tableData = this.totalTableData.slice((this.currentPage - 1) * 10, (this.currentPage - 1) * 10 + 10).concat()
+    },
+    sortMem () {
+      this.sortType = 'mem'
+      let copy = []
+      if (this.sMem) {
+        for (let i = 0; i < this.totalTableData.length - 1; i++) {
+          for (let j = i + 1; j < this.totalTableData.length; j++) {
+            if (this.totalTableData[i].memUsage < this.totalTableData[j].memUsage) {
+              copy = JSON.parse(JSON.stringify(this.totalTableData[i]))
+              this.totalTableData[i] = JSON.parse(JSON.stringify(this.totalTableData[j]))
+              this.totalTableData[j] = JSON.parse(JSON.stringify(copy))
+            }
+          }
+        }
+        this.sMem = false
+      } else {
+        for (let i = 0; i < this.totalTableData.length - 1; i++) {
+          for (let j = i + 1; j < this.totalTableData.length; j++) {
+            if (this.totalTableData[i].memUsage > this.totalTableData[j].memUsage) {
+              copy = JSON.parse(JSON.stringify(this.totalTableData[i]))
+              this.totalTableData[i] = JSON.parse(JSON.stringify(this.totalTableData[j]))
+              this.totalTableData[j] = JSON.parse(JSON.stringify(copy))
+            }
+          }
+        }
+        this.sMem = true
+      }
+      this.tableData = this.totalTableData.slice((this.currentPage - 1) * 10, (this.currentPage - 1) * 10 + 10).concat()
+    },
+    sortTime () {
+      this.sortType = 'time'
+      let copy = []
+      if (this.sTime) {
+        for (let i = 0; i < this.totalTableData.length - 1; i++) {
+          for (let j = i + 1; j < this.totalTableData.length; j++) {
+            if (this.totalTableData[i].timeUsage > this.totalTableData[j].timeUsage) {
+              copy = JSON.parse(JSON.stringify(this.totalTableData[i]))
+              this.totalTableData[i] = JSON.parse(JSON.stringify(this.totalTableData[j]))
+              this.totalTableData[j] = JSON.parse(JSON.stringify(copy))
+            }
+          }
+        }
+        this.sTime = false
+      } else {
+        for (let i = 0; i < this.totalTableData.length - 1; i++) {
+          for (let j = i + 1; j < this.totalTableData.length; j++) {
+            if (this.totalTableData[i].timeUsage < this.totalTableData[j].timeUsage) {
+              copy = JSON.parse(JSON.stringify(this.totalTableData[i]))
+              this.totalTableData[i] = JSON.parse(JSON.stringify(this.totalTableData[j]))
+              this.totalTableData[j] = JSON.parse(JSON.stringify(copy))
+            }
+          }
+        }
+        this.sTime = true
+      }
+      this.tableData = this.totalTableData.slice((this.currentPage - 1) * 10, (this.currentPage - 1) * 10 + 10).concat()
+    },
+    sortDate () {
+      this.sortType = 'date'
+      let copy = []
+      if (this.sDate) {
+        for (let i = 0; i < this.totalTableData.length - 1; i++) {
+          for (let j = i + 1; j < this.totalTableData.length; j++) {
+            if ((this.totalTableData[i].solveDate < this.totalTableData[j].solveDate && this.totalTableData[j].solveDate !== 'not done') || (this.totalTableData[i].solveDate === 'not done' && this.totalTableData[j] !== 'not done')) {
+              copy = JSON.parse(JSON.stringify(this.totalTableData[i]))
+              this.totalTableData[i] = JSON.parse(JSON.stringify(this.totalTableData[j]))
+              this.totalTableData[j] = JSON.parse(JSON.stringify(copy))
+            }
+          }
+        }
+        this.sDate = false
+      } else {
+        for (let i = 0; i < this.totalTableData.length - 1; i++) {
+          for (let j = i + 1; j < this.totalTableData.length; j++) {
+            if ((this.totalTableData[i].solveDate > this.totalTableData[j].solveDate && this.totalTableData[j].solveDate !== 'not done') || (this.totalTableData[i].solveDate === 'not done' && this.totalTableData[j] !== 'not done')) {
+              copy = JSON.parse(JSON.stringify(this.totalTableData[i]))
+              this.totalTableData[i] = JSON.parse(JSON.stringify(this.totalTableData[j]))
+              this.totalTableData[j] = JSON.parse(JSON.stringify(copy))
+            }
+          }
+        }
+        this.sDate = true
+      }
+      this.tableData = this.totalTableData.slice((this.currentPage - 1) * 10, (this.currentPage - 1) * 10 + 10).concat()
     }
   }
 }
