@@ -11,6 +11,16 @@
         </el-table-column>
         <el-table-column prop="topic" label="题目">
         </el-table-column>
+        <el-table-column label="内存">
+          <template slot-scope="scope">
+            <span>{{ scope.row.memUsage }}kb</span>
+          </template>
+        </el-table-column>
+        <el-table-column label="时间">
+          <template slot-scope="scope">
+            <span>{{ scope.row.timeUsage }}ms</span>
+          </template>
+        </el-table-column>
         <el-table-column prop="status" label="状态">
         </el-table-column>
         <el-table-column label="操作">
@@ -26,13 +36,13 @@
         </el-table-column>
       </el-table>
     </div>
-    <el-pagination
+    <!--<el-pagination
       background
       @current-change="handleCurrentChange"
       layout="prev, pager, next"
       :page-size="10"
       :total="pageCount">
-    </el-pagination>
+    </el-pagination>-->
   </div>
 </template>
 <script>
@@ -98,7 +108,7 @@ export default{
 </script>
 <style>
 .codingRecordContainer {
-  width: 60%;
+  width: 80%;
   padding: 30px;
   background: #fff;
   border: 1px solid #ddd;

@@ -40,17 +40,32 @@ export default {
       collapse: false,
       // 目前采用了固定菜单的形式，从长远看，菜单应该也从数据库获取
       items: [
-        {
-          icon: 'el-icon-star-on',
-          index: 'dashboard',
-          title: '平台首页'
-        },
+        // {
+        //   icon: 'el-icon-star-on',
+        //   index: 'dashboard',
+        //   title: '平台首页'
+        // },
         // {
         //   icon: 'el-icon-share',
         //   index: 'users',
         //   title: this.$t('common.mainPage.users'),
         //   limit: 'Admin'
         // },
+        {
+          icon: 'el-icon-edit',
+          index: '4',
+          title: '在线编程',
+          subs: [
+            {
+              index: 'codingQuestion',
+              title: '编程题列表'
+            },
+            {
+              index: 'codingRecord',
+              title: '答题汇总'
+            }
+          ]
+        },
         {
           icon: 'el-icon-date',
           index: '3',
@@ -71,24 +86,9 @@ export default {
           ]
         },
         {
-          icon: 'el-icon-edit',
-          index: '4',
-          title: '在线编程',
-          subs: [
-            {
-              index: 'codingQuestion',
-              title: '编程题列表'
-            },
-            {
-              index: 'codingRecord',
-              title: '答题汇总'
-            }
-          ]
-        },
-        {
           icon: 'el-icon-tickets',
           index: '2',
-          title: '教师出题',
+          title: '教师管理',
           subs: [
             {
               index: 'createQuestion',
@@ -97,6 +97,10 @@ export default {
             {
               index: 'createdQuestions',
               title: '已创建题目'
+            },
+            {
+              index: 'recordForTeacher',
+              title: '查看学生代码'
             }
           ]
         },

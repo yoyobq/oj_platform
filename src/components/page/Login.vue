@@ -200,22 +200,22 @@ export default {
       // 并涉及到5张表里，以后有时间了需要做一个view，简化固定数据的访问过程
       return new Promise(async (resolve, reject) => {
         localStorage.setItem('realName', stuInfo.realName)
-        localStorage.setItem('sex', stuInfo.sex)
+        // localStorage.setItem('sex', stuInfo.sex)
         localStorage.setItem('stuId', stuInfo.stuId)
-        if (stuInfo.classId !== null) {
-          localStorage.setItem('classId', stuInfo.classId)
-          localStorage.setItem('className', await this.getClassName(stuInfo.classId))
-        }
-        if (stuInfo.departmentId !== null) {
-          localStorage.setItem('departmentId', stuInfo.departmentId)
-          localStorage.setItem('departmentName', await this.getDepartmentName(stuInfo.departmentId))
-          localStorage.setItem('eduBack', stuInfo.eduBack)
-          // localStorage.setItem('cellphone', stuInfo.stuId)
-        }
-        if (stuInfo.specialityId !== null) {
-          localStorage.setItem('specialityId', stuInfo.specialityId)
-          localStorage.setItem('specName', await this.getSpecName(stuInfo.specialityId))
-        }
+        // if (stuInfo.classId !== null) {
+        //   localStorage.setItem('classId', stuInfo.classId)
+        //   localStorage.setItem('className', await this.getClassName(stuInfo.classId))
+        // }
+        // if (stuInfo.departmentId !== null) {
+        //   localStorage.setItem('departmentId', stuInfo.departmentId)
+        //   localStorage.setItem('departmentName', await this.getDepartmentName(stuInfo.departmentId))
+        //   localStorage.setItem('eduBack', stuInfo.eduBack)
+        //   localStorage.setItem('cellphone', stuInfo.stuId)
+        // }
+        // if (stuInfo.specialityId !== null) {
+        //   localStorage.setItem('specialityId', stuInfo.specialityId)
+        //   localStorage.setItem('specName', await this.getSpecName(stuInfo.specialityId))
+        // }
         localStorage.setItem('email', authInfo.email)
         localStorage.setItem('lastLoginIp', authInfo.lastLoginIp)
         localStorage.setItem('lastLoginTime', authInfo.lastLoginTime)
@@ -235,9 +235,9 @@ export default {
         })
       })
     },
-    signUpByMail () {
-      this.$router.push('/signUpByMail')
-    },
+    // signUpByMail () {
+    //   this.$router.push('/signUpByMail')
+    // },
     signUp () {
       this.$router.push('/signUpByIdentity')
     },

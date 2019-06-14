@@ -62,7 +62,7 @@ export default{
       this.$router.push('/codingTest?id=' + id)
     },
     handleCurrentChange (val) {
-      this.getQuestions(val)
+      this.getQuestions((val - 1) * 10)
     }
   }
 }

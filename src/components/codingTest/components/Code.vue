@@ -58,6 +58,18 @@ export default {
   .CodeMirror pre{
     color: white;
   }
+  .cm-s-default .cm-variable-2{
+    color: #9dceff;
+  }
+  .cm-s-default .cm-keyword{
+    color: #f9cfff;
+  }
+  .cm-s-default .cm-def{
+    color: #b4b4ff;
+  }
+  .cm-s-default .cm-number{
+    color: #baffe3;
+  }
   .codePage .el-card__header{
     background-color: rgb(66, 61, 78);
     border-bottom: 1px solid rgb(66, 61, 78);

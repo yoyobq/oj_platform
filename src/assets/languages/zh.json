@@ -107,6 +107,10 @@
       "auto": "自动生成",
       "buildingCode": "自动生成用例代码"
     },
+    "recordForTeacher": {
+      "onlyDone": "仅查看已完成记录",
+      "searchQuestion": "搜索题目标题"
+    },
     "module": {
       "module": "课程总览",
       "moduleAudit": "申请审核",

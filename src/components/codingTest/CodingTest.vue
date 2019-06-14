@@ -202,7 +202,9 @@ export default {
       let data = {
         '_csrf': this.$cookies.get('csrfToken'),
         'data': {
-          status: 'done'
+          status: 'done',
+          memUsage: this.realMem,
+          timeUsage: this.realTime
         }
       }
       this.$api.put('codingRecords/' + this.crId, data, res => {}, res => {})

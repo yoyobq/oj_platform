@@ -8,7 +8,7 @@ export default new Router({
   routes: [
     {
       path: '/',
-      redirect: '/dashboard'
+      redirect: '/codingQuestion'
     },
     {
       path: '/',
@@ -56,6 +56,11 @@ export default new Router({
           path: '/createdQuestions',
           component: resolve => require(['../components/page/CreatedQuestions.vue'], resolve),
           meta: { title: '已创建题目' }
+        },
+        {
+          path: 'recordForTeacher',
+          component: resolve => require(['../components/page/RecordForTeacher.vue'], resolve),
+          meta: {title: '查看学生记录'}
         },
         {
           path: '/module',
