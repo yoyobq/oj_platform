@@ -29,7 +29,7 @@ export default {
     height: 100%
   }
   .error{
-    height: 25%;
+    height: 30%;
     margin-bottom: 5%;
   }
 </style>

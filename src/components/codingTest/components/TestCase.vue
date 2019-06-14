@@ -41,6 +41,6 @@ export default {
     height: 100%
   }
   .testCase{
-    height: 40%;
+    height: 45%;
   }
 </style>

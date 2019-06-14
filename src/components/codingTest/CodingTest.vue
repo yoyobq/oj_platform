@@ -6,13 +6,13 @@
         <el-breadcrumb-item>{{$t('common.codingTest.title')}}</el-breadcrumb-item>
       </el-breadcrumb>
       </div>
-      <el-row>
+      <el-row class="test-el-row">
       <el-col class="leftPart">
         <vtitle :topic="topic" :describe="describe" :hint="hint"></vtitle>
         <testcase :cqId="cqId"></testcase>
       </el-col>
       <el-col class="middlePart">
-        <vcode :editorOption="editorOption" :preCode="preCode" ref="myCode"></vcode>
+        <vcode :editorOption="editorOption" :preCode="preCode" :programLang="programLang" ref="myCode"></vcode>
         <!--<el-button @click="cancel">Cancel</el-button>-->
         <el-button type="primary" @click="run">Submit and Run</el-button>
         <el-button type="success" @click="save">Save Code</el-button>
@@ -83,7 +83,8 @@ export default {
       errMsg: '',
       correctRate: '',
       minTime: 0,
-      minMem: 0
+      minMem: 0,
+      programLang: 'Javascript'
     }
   },
   methods: {

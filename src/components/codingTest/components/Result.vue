@@ -31,6 +31,6 @@ export default {
     height: 100%
   }
   .result{
-    height: 25%;
+    height: 30%;
   }
 </style>

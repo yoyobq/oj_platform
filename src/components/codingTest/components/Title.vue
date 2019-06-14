@@ -32,7 +32,7 @@ export default {
     overflow-y: auto;
   }
   .title{
-    height: 40%;
+    height: 45%;
     margin-bottom: 5%;
   }
 </style>

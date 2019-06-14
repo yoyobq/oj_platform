@@ -1,6 +1,14 @@
 <template>
   <div class="code">
-    <el-card :body-style="{ padding: '20px' }">
+    <el-card class="codePage" :body-style="{ padding: '20px' }">
+      <div slot="header" class="clearfix">
+        <el-select v-model="programLang">
+          <el-option label="Javascript" value="Javascript"></el-option>
+          <el-option label="Java" value="Java"></el-option>
+          <el-option label="C" value="C"></el-option>
+          <el-option label="C++" value="C++"></el-option>
+        </el-select>
+      </div>
       <codemirror class="codemirror" :value="preCode"
         :options="editorOption"
         ref="myEditor">
@@ -13,7 +21,7 @@
 <script>
 export default {
   name: 'code',
-  props: ['preCode', 'editorOption'],
+  props: ['preCode', 'editorOption', 'programLang'],
   data () {
     return {
     }
@@ -34,13 +42,13 @@ export default {
 }
 </script>
 <style>
-  .codemirror{
-    height: 100%
-  }
   .CodeMirror{
     height: 100%
   }
   .code{
-    height: 80%;
+    height: 90%;
+  }
+  .codePage .el-card__header{
+    background-color: rgb(66, 61, 78)
   }
 </style>
