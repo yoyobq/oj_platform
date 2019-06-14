@@ -43,12 +43,23 @@ export default {
 </script>
 <style>
   .CodeMirror{
-    height: 100%
+    height: 100%;
+    background-color: rgb(34, 32, 39);
   }
   .code{
     height: 90%;
   }
+  .codePage{
+    background-color: rgb(34, 32, 39);
+  }
+  .CodeMirror-gutter{
+    background-color: rgb(34, 32, 39);
+  }
+  .CodeMirror pre{
+    color: white;
+  }
   .codePage .el-card__header{
-    background-color: rgb(66, 61, 78)
+    background-color: rgb(66, 61, 78);
+    border-bottom: 1px solid rgb(66, 61, 78);
   }
 </style>

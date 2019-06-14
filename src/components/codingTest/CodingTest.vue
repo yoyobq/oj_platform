@@ -139,7 +139,13 @@ export default {
           })
         }
       }, res => {
-        this.errMsg = res.data.error
+        var reg1 = new RegExp('D:/oj_reserve/submitCode/', 'g')
+        var reg2 = new RegExp(/D:\\oj_reserve\\submitCode\\/, 'g')
+        var reg3 = new RegExp('/var/www/oj_reserve/submitCode/', 'g')
+        res.data.error = res.data.error.replace(reg1, '').replace(reg2, '').replace(reg3, '')
+        let index1 = res.data.error.indexOf('at')
+        let index2 = res.data.error.indexOf('at', index1 + 1)
+        this.errMsg = res.data.error.substring(0, index2)
         this.correctRate = ''
         this.realTime = null
         this.realMem = null

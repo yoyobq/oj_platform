@@ -1,7 +1,7 @@
 <template>
   <div class="error">
-    <el-card :body-style="{ padding: '20px' }">
-      <b>错误提示： </b><span style="color:red;">{{errMsg}}</span>
+    <el-card class="error-el-card" :body-style="{ padding: '20px' }">
+      <PRE><b>错误提示： </b><span style="color:red;">{{errMsg}}</span></PRE>
     </el-card>
   </div>
 </template>
@@ -31,5 +31,8 @@ export default {
   .error{
     height: 30%;
     margin-bottom: 5%;
+  }
+  .error-el-card{
+    overflow-x: auto;
   }
 </style>
