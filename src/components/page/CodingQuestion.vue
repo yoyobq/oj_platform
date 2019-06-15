@@ -7,14 +7,14 @@
     </div>
     <div class="codingQuestionContainer">
       <el-table :data="tableData" style="width: 100%">
-        <el-table-column prop="id" label="编号">
+        <el-table-column prop="id" :label="$t('common.codingQuestion.id')">
         </el-table-column>
-        <el-table-column label="题目">
+        <el-table-column :label="$t('common.codingQuestion.topic')">
           <template slot-scope="scope">
             <el-button type="text" @click="selectQuestion(scope.row.id)">{{ scope.row.topic }}</el-button>
           </template>
         </el-table-column>
-        <el-table-column prop="programLang" label="编程语言">
+        <el-table-column prop="programLang" :label="$t('common.codingQuestion.programLang')">
         </el-table-column>
       </el-table>
     </div>

@@ -2,8 +2,8 @@
   <div class="testCase">
     <el-card :body-style="{ padding: '20px' }">
       <div><b>示例</b></div><br>
-      <div>输入： {{inputCase}}</div><br>
-      <div>输出： {{outputCase}}</div><br>
+      <div>{{$t('common.codingTest.inputCase')}}： {{inputCase}}</div><br>
+      <div>{{$t('common.codingTest.outputCase')}}： {{outputCase}}</div><br>
     </el-card>
   </div>
   

@@ -1,9 +1,9 @@
 <template>
   <div class="title">
     <el-card :body-style="{ padding: '20px' }">
-      <div class="topic"><b>题目标题：</b> {{topic}}</div><br>
-      <div class="describe"><b>问题描述：</b> {{describe}}</div><br>
-      <div class="hint"><b>编程提示：</b> {{hint}}</div>
+      <div class="topic"><b>{{$t('common.codingTest.topic')}}：</b> {{topic}}</div><br>
+      <div class="describe"><b>{{$t('common.codingTest.describe')}}：</b> {{describe}}</div><br>
+      <div class="hint"><b>{{$t('common.codingTest.hint')}}：</b> {{hint}}</div>
     </el-card>
   </div>
 </template>

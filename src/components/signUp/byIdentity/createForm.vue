@@ -9,7 +9,7 @@
       </el-form-item>
       <el-form-item :label="$t('common.signUp.email')" :label-width="formLabelWidth" prop="email">
         <el-input v-model.trim="authInfo.email" auto-complete="off" :disabled="isVerifyEmail">
-          <el-button v-if="!isVerifyEmail" slot ="append" type="primary" @click="verifyEmail()">点击验证邮箱</el-button>
+          <el-button v-if="!isVerifyEmail" slot ="append" type="primary" @click="verifyEmail()">{{$t('common.signUp.clickVerify')}}</el-button>
           <i v-if="isVerifyEmail" slot ="append" class="el-icon-check"></i>
         </el-input>
       </el-form-item>
@@ -24,7 +24,7 @@
     </el-form>
     <div slot="footer" class="dialog-footer">
       <!-- <el-button @click="cancelAll()">{{$t('common.signUp.registerCancel')}}</el-button> -->
-      <el-button @click="cancelSignUp">回到登录</el-button>
+      <el-button @click="cancelSignUp">{{$t('common.signUp.backToLogin')}}</el-button>
       <el-button type="primary" @click="signUp()">{{$t('common.signUp.registerConfirm')}}</el-button>
     </div>
   </el-dialog>
@@ -100,13 +100,13 @@ export default {
       if (this.isVerifyEmail === false) {
         this.$message({
           type: 'error',
-          message: '邮箱未验证'
+          message: this.$t('message.signUp.unverifyEmail')
         })
         return false
       } else if (this.authInfo.code !== this.validCode) {
         this.$message({
           type: 'error',
-          message: '验证码错误'
+          message: this.$t('message.signUp.wrongCode')
         })
         return false
       }
@@ -115,7 +115,7 @@ export default {
       await this.createStuInfo(id.insertId)
       this.$message({
         type: 'success',
-        message: '帐号生成成功，请登录'
+        message: this.$t('message.signUp.toLogin')
       })
       this.$router.push('/login')
     },
@@ -166,7 +166,7 @@ export default {
             if (await this.checkEmail()) {
               this.$message({
                 type: 'warning',
-                message: this.authInfo.email + '已注册，若不是本人，请及时联系管理员'
+                message: this.authInfo.email + this.$t('message.signUp.hasSigned2')
               })
               resolve(true)
             /* } else if (await this.checkIdNumber()) {
@@ -221,7 +221,7 @@ export default {
         if (await this.checkEmail()) {
           this.$message({
             type: 'warning',
-            message: this.authInfo.email + '已注册'
+            message: this.authInfo.email + this.$t('message.personal.hasSigned')
           })
           return false
         }
@@ -231,7 +231,7 @@ export default {
       } else {
         this.$message({
           type: 'warning',
-          message: this.authInfo.email + '不是正确的邮箱格式'
+          message: this.authInfo.email + this.$t('message.signUp.invalidEmail')
         })
       }
     },
@@ -265,14 +265,14 @@ export default {
           this.$api.post('emails', data, res => {
             this.$message({
               type: 'success',
-              message: '邮件已发送'
+              message: this.$t('message.signUp.sendEmail')
             })
             // return validData
           }, res => {
             // reject(new Error('邮件发送失败'))
             this.$message({
               type: 'warning',
-              message: '邮件发送失败'
+              message: this.$t('message.signUp.sendFail')
             })
             // console.log('邮件发送失败')
           })
@@ -299,7 +299,7 @@ export default {
           this.validCode = res
           this.$message({
             type: 'warning',
-            message: '邮件之前已发送'
+            message: this.$t('message.signUp.hasSent')
           })
           this.isVerifyEmail = true
           resolve(true)
@@ -325,8 +325,8 @@ export default {
     },
     sexToTinyInt (sex) {
       return sex === '男' ? 1 : 0
-    },
-    getDepartmentId (departmentName) {
+    }
+    /* getDepartmentId (departmentName) {
       let data = {
         departmentName: departmentName
       }
@@ -363,7 +363,7 @@ export default {
           reject(new Error('获取专业信息出错'))
         })
       })
-    }
+    } */
   },
   /*
   watch: {

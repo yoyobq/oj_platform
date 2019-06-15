@@ -44,19 +44,19 @@
             <el-table-column type="expand">
               <template slot-scope="props">
                 <el-form label-position="right" inline class="demo-table-expand">
-                  <el-form-item label="判题程序代码">
+                  <el-form-item :label="$t('common.addTest.programCode')">
                     <PRE>{{ props.row.testCode }}</PRE>
                   </el-form-item>
                 </el-form>
               </template>
             </el-table-column>
-            <el-table-column prop="id" label="编号"></el-table-column>
-            <el-table-column prop="programLang" label="语言"></el-table-column>
-            <el-table-column prop="inputDataStructure" label="输入结构"></el-table-column>
-            <el-table-column prop="outputDataStructure" label="输出结构"></el-table-column>
+            <el-table-column prop="id" :label="$t('common.addTest.tpId')"></el-table-column>
+            <el-table-column prop="programLang" :label="$t('common.addTest.programCode')"></el-table-column>
+            <el-table-column prop="inputDataStructure" :label="$t('common.addTest.inputDataStructure')"></el-table-column>
+            <el-table-column prop="outputDataStructure" :label="$t('common.addTest.outputDataStructure')"></el-table-column>
           </el-table>
            <div style="margin-top: 20px">
-            <el-button @click="setCurrent()">取消选择</el-button>
+            <el-button @click="setCurrent()">{{$t('common.addTest.cancel')}}</el-button>
           </div>
         </el-form-item>
         <el-form-item>

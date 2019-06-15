@@ -1,7 +1,7 @@
 <template>
   <div class="error">
     <el-card class="error-el-card" :body-style="{ padding: '20px' }">
-      <PRE><b>错误提示： </b><span style="color:red;">{{errMsg}}</span></PRE>
+      <b>{{$t('common.codingTest.error')}}： </b><PRE><span style="color:red;">{{errMsg}}</span></PRE>
     </el-card>
   </div>
 </template>

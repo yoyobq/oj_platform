@@ -7,18 +7,18 @@
     </div>
     <div class="createQuestionsContainer">
       <el-table :data="tableData" style="width: 100%">
-        <el-table-column prop="id" label="编号">
+        <el-table-column prop="id" :label="$t('common.createdQuestions.id')">
         </el-table-column>
-        <el-table-column label="题目">
+        <el-table-column :label="$t('common.createdQuestions.topic')">
           <template slot-scope="scope">
             <el-button type="text" @click="selectQuestion(scope.row.id)">{{ scope.row.topic }}</el-button>
           </template>
         </el-table-column>
-        <el-table-column prop="programLang" label="编程语言">
+        <el-table-column prop="programLang" :label="$t('common.createdQuestions.programLang')">
         </el-table-column>
-        <el-table-column prop="status" label="状态">
+        <el-table-column prop="status" :label="$t('common.createdQuestions.status')">
         </el-table-column>
-        <el-table-column label="操作">
+        <el-table-column :label="$t('common.createdQuestions.operate')">
           <template slot-scope="scope">
             <el-button size="mini" @click="edit(scope.row.id)">{{$t('common.createdQuestions.edit')}}</el-button>
             <el-button type="primary" size="mini" @click="addTest(scope.row.id)">{{$t('common.createdQuestions.addTest')}}</el-button>

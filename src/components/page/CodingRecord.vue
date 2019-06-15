@@ -7,31 +7,31 @@
     </div>
     <div class="codingRecordContainer">
       <el-table :data="tableData" style="width: 100%">
-        <el-table-column prop="id" label="答题编号">
+        <el-table-column prop="id" :label="$t('common.codingRecord.id')">
         </el-table-column>
-        <el-table-column prop="topic" label="题目">
+        <el-table-column prop="topic" :label="$t('common.codingRecord.topic')">
         </el-table-column>
-        <el-table-column label="内存">
+        <el-table-column :label="$t('common.codingRecord.mem')">
           <template slot-scope="scope">
             <span>{{ scope.row.memUsage }}kb</span>
           </template>
         </el-table-column>
-        <el-table-column label="时间">
+        <el-table-column :label="$t('common.codingRecord.time')">
           <template slot-scope="scope">
             <span>{{ scope.row.timeUsage }}ms</span>
           </template>
         </el-table-column>
-        <el-table-column prop="status" label="状态">
+        <el-table-column prop="status" :label="$t('common.codingRecord.status')">
         </el-table-column>
-        <el-table-column label="操作">
+        <el-table-column :label="$t('common.codingRecord.operate')">
           <template slot-scope="scope">
             <el-button
               size="mini"
               v-if="scope.row.status==='unsolved'"
-              @click="contCoding(scope.row)">继续编程</el-button>
+              @click="contCoding(scope.row)">{{$t('common.codingRecord.contCoding')}}</el-button>
               <el-button size="mini"
               v-else
-              @click="checkCoding(scope.row)">查看代码</el-button>
+              @click="checkCoding(scope.row)">{{$t('common.codingRecord.checkCode')}}</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -74,8 +74,8 @@ export default{
       this.$router.push('/codingTest?id=' + row.cqId)
     },
     checkCoding (row) {
-      this.$alert('<PRE>' + row.code + '</PRE>', '查看代码', {
-        confirmButtonText: '确定',
+      this.$alert('<PRE>' + row.code + '</PRE>', this.$t('common.codingRecord.checkCode'), {
+        confirmButtonText: this.$t('common.codingRecord.ok'),
         dangerouslyUseHTMLString: true
       })
     },

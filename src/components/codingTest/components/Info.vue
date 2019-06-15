@@ -1,10 +1,10 @@
 <template>
   <div class="info">
     <el-card :body-style="{ padding: '20px' }">
-      时间限制：{{timeLimit}}<br>内存限制：{{memLimit}}<br>
-      最佳时间使用：{{minTime}}ms<br>最佳内存使用： {{minMem}}kb<br>
-      提交次数：{{submitCount}}<br>
-      开始时间：{{startDate}}<br>
+      <b>{{$t('common.codingTest.timeLimit')}}：</b>{{timeLimit}}<br><b>{{$t('common.codingTest.memLimit')}}：</b>{{memLimit}}<br>
+      <b>{{$t('common.codingTest.minTime')}}：</b>{{minTime}}ms<br><b>{{$t('common.codingTest.minMem')}}：</b>{{minMem}}kb<br>
+      <b>{{$t('common.codingTest.submitCount')}}:</b>{{submitCount}}<br>
+      <b>{{$t('common.codingTest.startDate')}}：</b>{{startDate}}<br>
     </el-card>
   </div>
 </template>

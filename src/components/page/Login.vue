@@ -206,12 +206,12 @@ export default {
         //   localStorage.setItem('classId', stuInfo.classId)
         //   localStorage.setItem('className', await this.getClassName(stuInfo.classId))
         // }
-        // if (stuInfo.departmentId !== null) {
-        //   localStorage.setItem('departmentId', stuInfo.departmentId)
-        //   localStorage.setItem('departmentName', await this.getDepartmentName(stuInfo.departmentId))
-        //   localStorage.setItem('eduBack', stuInfo.eduBack)
-        //   localStorage.setItem('cellphone', stuInfo.stuId)
-        // }
+        if (stuInfo.departmentId !== null) {
+          localStorage.setItem('departmentId', stuInfo.departmentId)
+          localStorage.setItem('departmentName', await this.getDepartmentName(stuInfo.departmentId))
+          localStorage.setItem('eduBack', stuInfo.eduBack)
+          localStorage.setItem('cellphone', stuInfo.stuId)
+        }
         // if (stuInfo.specialityId !== null) {
         //   localStorage.setItem('specialityId', stuInfo.specialityId)
         //   localStorage.setItem('specName', await this.getSpecName(stuInfo.specialityId))

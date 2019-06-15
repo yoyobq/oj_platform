@@ -85,7 +85,7 @@ export default {
         highestDegree: '',
         departmentName: '',
         type: '',
-        school: '西交利物浦',
+        school: 'XJTLU',
         email: '',
         cellphone: ''
       },
@@ -156,9 +156,9 @@ export default {
       })
     },
     changePass () {
-      this.$confirm(this.$t('message.personal.verifyEmail'), '提示', {
-        confirmButtonText: '发送',
-        cancelButtonText: '取消',
+      this.$confirm(this.$t('message.personal.verifyEmail'), this.$t('message.personal.hint'), {
+        confirmButtonText: this.$t('common.personal.send'),
+        cancelButtonText: this.$t('common.module.cancel'),
         closeOnClickModal: false
       }).then(() => {
         this.sendEmail()
@@ -168,7 +168,7 @@ export default {
           cancelButtonText: this.$t('common.module.cancel'),
           closeOnClickModal: false,
           inputPattern: /\w+/,
-          inputErrorMessage: '请输入验证码'
+          inputErrorMessage: this.$t('message.personal.inputCode')
         }).then(({ value }) => {
           if (value === this.validCode) {
             this.$prompt(this.$t('message.personal.inputNewPasswd'), this.$t('common.module.tips'), {
@@ -177,7 +177,7 @@ export default {
               closeOnClickModal: false,
               inputType: 'password',
               inputPattern: /[\w!#$%&'*+/=?^_`{|}~-]+/,
-              inputErrorMessage: '请输入新密码'
+              inputErrorMessage: this.$t('message.personal.inputNewPasswd')
             }).then(({ value }) => {
               let sha1 = crypto.createHash('sha1')
               sha1.update(value)
@@ -201,25 +201,25 @@ export default {
             }).catch(() => {
               this.$message({
                 type: 'info',
-                message: '修改取消'
+                message: this.$t('message.personal.reviseCancel')
               })
             })
           } else {
             this.$message({
               type: 'warning',
-              message: '验证码错误'
+              message: this.$t('message.personal.errorCode')
             })
           }
         }).catch(() => {
           this.$message({
             type: 'info',
-            message: '取消输入'
+            message: this.$t('message.personal.cancelInput')
           })
         })
       }).catch(() => {
         this.$message({
           type: 'info',
-          message: '取消验证'
+          message: this.$t('message.personal.cancelVerify')
         })
       })
     },
@@ -254,14 +254,14 @@ export default {
             // console.log('邮件发送成功')
             this.$message({
               type: 'success',
-              message: '邮件发送成功'
+              message: this.$t('message.personal.emailSuccess')
             })
           }, res => {
             // reject(new Error('邮件发送失败'))
             // console.log('邮件发送失败')
             this.$message({
               type: 'warning',
-              message: '邮件发送失败'
+              message: this.$t('message.personal.emailFail')
             })
           })
           // console.log(this.validCode)
@@ -276,7 +276,7 @@ export default {
             await this.validator(res.data.detail.id)
           } else {
             // console.log('验证码发送错误')
-            reject(new Error('验证码发送错误'))
+            reject(new Error('验证码已存在'))
           }
         })
       })
@@ -288,7 +288,7 @@ export default {
           // console.log(res)
           this.$message({
             type: 'warning',
-            message: '邮件之前已发送'
+            message: this.$t('message.personal.emailHasBeenSend')
           })
           this.isVerifyEmail = true
           resolve(true)
@@ -340,7 +340,7 @@ export default {
         this.setLocalStorage()
         this.$message({
           type: 'success',
-          message: '个人信息修改成功！'
+          message: this.$t('message.personal.changeSuccess')
         })
       }, res => {
         this.$message({
@@ -349,14 +349,14 @@ export default {
         })
       })
     },
-    setLocalStorage (stuInfo, authInfo) {
+    /* setLocalStorage (stuInfo, authInfo) {
       // localStorage.setItem('realName', this.ruleForm.realName)
       // localStorage.setItem('stuId', this.ruleForm.stuId)
       localStorage.setItem('departmentName', this.ruleForm.departmentName)
       localStorage.setItem('eduBack', this.ruleForm.highestDegree)
       // localStorage.setItem('email', this.ruleForm.email)
-    },
-    getDepartmentId () {
+    }, */
+    /* getDepartmentId () {
       return new Promise((resolve, reject) => {
         if (!this.ruleForm.departmentName) {
           resolve(null)
@@ -398,7 +398,7 @@ export default {
           message: this.$t('message.personal.serverError')
         })
       })
-    },
+    }, */
     resetForm (formName) {
       this.$refs[formName].resetFields()
     }

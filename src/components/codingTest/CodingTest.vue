@@ -14,8 +14,8 @@
       <el-col class="middlePart">
         <vcode :editorOption="editorOption" :preCode="preCode" :programLang="programLang" ref="myCode"></vcode>
         <!--<el-button @click="cancel">Cancel</el-button>-->
-        <el-button type="primary" @click="run">Submit and Run</el-button>
-        <el-button type="success" @click="save">Save Code</el-button>
+        <el-button type="primary" @click="run">{{$t('common.codingTest.sub&run')}}</el-button>
+        <el-button type="success" @click="save">{{$t('common.codingTest.save')}}</el-button>
       </el-col>
       <el-col class="rightPart">
         <info :submitCount="submitCount" :timeLimit="timeLimit" :memLimit="memLimit" :minTime="minTime" :minMem="minMem" :startDate="startDate"></info>
@@ -126,8 +126,8 @@ export default {
             callback: action => {
               if (this.correctRate === '100%') {
                 this.$confirm(this.$t('message.codingTest.statusDone'), this.$t('message.codingTest.message'), {
-                  confirmButtonText: '确定',
-                  cancelButtonText: '取消',
+                  confirmButtonText: this.$t('common.codingTest.ok'),
+                  cancelButtonText: this.$t('common.codingTest.cancel'),
                   type: 'warning'
                 }).then(() => {
                   this.statusDone()
@@ -268,8 +268,8 @@ export default {
         }
         if (this.crId === '') {
           this.$confirm(this.$t('message.codingTest.addNewRecord'), this.$t('message.codingTest.message'), {
-            confirmButtonText: '确定',
-            cancelButtonText: '取消'
+            confirmButtonText: this.$t('common.codingTest.ok'),
+            cancelButtonText: this.$t('common.codingTest.cancel')
           }).then(() => {
             let data = {
               '_csrf': this.$cookies.get('csrfToken'),

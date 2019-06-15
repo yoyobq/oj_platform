@@ -10,53 +10,53 @@
       <el-input :placeholder="$t('common.recordForTeacher.searchQuestion')" v-model="searchInput" class="searchInput">
         <el-button slot="append" icon="el-icon-search" @click="search"></el-button>
       </el-input>
-      <el-table :data="tableData" :default-sort = "{prop: 'id', order: 'ascending'}">
+      <el-table :data="tableData">
         <el-table-column width="140%">
-          <template slot="header" slot-scope="scope">
+          <template slot="header">
             <el-button type="text"
-            @click="sortId()">答题编号<span class="el-icon-d-caret"></span></el-button>
+            @click="sortId()">{{$t('common.recordForTeacher.crId')}}<span class="el-icon-d-caret"></span></el-button>
           </template>
           <template slot-scope="scope">
             {{scope.row.id}}
           </template>
         </el-table-column>
-        <el-table-column prop="realName" label="学生姓名">
+        <el-table-column prop="realName" :label="$t('common.recordForTeacher.realName')">
         </el-table-column>
-        <el-table-column prop="topic" label="题目">
+        <el-table-column prop="topic" :label="$t('common.recordForTeacher.topic')">
         </el-table-column>
         <el-table-column>
-          <template slot="header" slot-scope="scope">
+          <template slot="header">
             <el-button type="text"
-            @click="sortMem()">内存<span class="el-icon-d-caret"></span></el-button>
+            @click="sortMem()">{{$t('common.recordForTeacher.mem')}}<span class="el-icon-d-caret"></span></el-button>
           </template>
           <template slot-scope="scope">
-            {{scope.row.memUsage}}
+            {{scope.row.memUsage}}kb
           </template>
         </el-table-column>
         <el-table-column>
-          <template slot="header" slot-scope="scope">
+          <template slot="header">
             <el-button type="text"
-            @click="sortTime()">时间<span class="el-icon-d-caret"></span></el-button>
+            @click="sortTime()">{{$t('common.recordForTeacher.time')}}<span class="el-icon-d-caret"></span></el-button>
           </template>
           <template slot-scope="scope">
-            {{scope.row.timeUsage}}
+            {{scope.row.timeUsage}}ms
           </template>
         </el-table-column>
         <el-table-column>
-          <template slot="header" slot-scope="scope">
+          <template slot="header">
             <el-button type="text"
-            @click="sortDate()">完成时间<span class="el-icon-d-caret"></span></el-button>
+            @click="sortDate()">{{$t('common.recordForTeacher.date')}}<span class="el-icon-d-caret"></span></el-button>
           </template>
           <template slot-scope="scope">
             {{scope.row.solveDate}}
           </template>
         </el-table-column>
-        <el-table-column prop="status" label="状态">
+        <el-table-column prop="status" :label="$t('common.recordForTeacher.status')">
         </el-table-column>
-        <el-table-column label="操作">
+        <el-table-column :label="$t('common.recordForTeacher.operate')">
           <template slot-scope="scope">
             <el-button size="mini"
-            @click="checkCoding(scope.row)">查看代码</el-button>
+            @click="checkCoding(scope.row)">{{$t('common.recordForTeacher.checkCode')}}</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -161,8 +161,8 @@ export default{
   },
   methods: {
     checkCoding (row) {
-      this.$alert('<PRE>' + row.code + '</PRE>', '查看代码', {
-        confirmButtonText: '确定',
+      this.$alert('<PRE>' + row.code + '</PRE>', this.$t('common.recordForTeacher.checkCode'), {
+        confirmButtonText: this.$t('common.recordForTeacher.ok'),
         dangerouslyUseHTMLString: true
       })
     },

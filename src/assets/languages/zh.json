@@ -35,7 +35,9 @@
       "stuId": "学号",
       "realName": "真实姓名",
       "email": "登录邮箱",
-      "code": "验证码"
+      "code": "验证码",
+      "backToLogin": "返回登录",
+      "clickVerify": "点击验证邮箱"
     },
     "personal": {
       "title": "个人设置",
@@ -53,26 +55,54 @@
       "modify": "修改信息",
       "changePass": "修改密码",
       "reset": "重置",
-      "university": "本科",
-      "postgraduate": "研究生",
-      "PhD": "博士及以上",
-      "junior": "大专及以下",
       "undergrauate": "本科生",
       "masterStudent": "研究生",
       "senior": "高中生",
       "stuId": "学号：",
       "save": "保存",
-      "other": "其他"
+      "other": "其他",
+      "send": "发送"
     },
     "codingQuestion": {
-      "title": "编程题列表"
+      "title": "编程题列表",
+      "id": "编号",
+      "topic": "题目",
+      "programLang": "编程语言"
     },
     "codingTest": {
       "title": "编程测试",
-      "unLimited": "无限制"
+      "unLimited": "无限制",
+      "sub&run": "提交并运行",
+      "save": "保存代码",
+      "ok": "确定",
+      "cancel": "取消",
+      "error": "错误提示",
+      "timeLimit": "时间限制",
+      "memLimit": "内存限制",
+      "minTime": "最佳时间使用",
+      "minMem": "最佳内存使用",
+      "submitCount": "提交次数",
+      "startDate": "开始时间",
+      "correctRate": "正确率",
+      "realTime": "本次时间使用",
+      "realMem": "本次内存使用",
+      "inputCase": "输入",
+      "outputCase": "输出",
+      "topic": "题目标题",
+      "describe": "问题描述",
+      "hint": "编程提示"
     },
     "codingRecord": {
-      "title": "答题汇总"
+      "title": "答题汇总",
+      "id": "答题编号",
+      "topic": "题目",
+      "mem": "内存",
+      "time": "时间",
+      "status": "状态",
+      "operate": "操作",
+      "contCoding": "继续编程",
+      "checkCode": "查看代码",
+      "ok": "确定"
     },
     "createQuestion": {
       "topic": "题目标题",
@@ -92,7 +122,12 @@
     "createdQuestions": {
       "title": "已创建题目",
       "edit": "编辑",
-      "addTest": "添加测试代码"
+      "addTest": "添加测试代码",
+      "id": "编号",
+      "topic": "题目",
+      "programLang": "编程语言",
+      "status": "状态",
+      "operate": "操作"
     },
     "addTest": {
       "title": "添加测试代码",
@@ -105,12 +140,26 @@
       "testProgram": "请选择判题程序代码",
       "byHand": "手动输入",
       "auto": "自动生成",
-      "buildingCode": "自动生成用例代码"
+      "buildingCode": "自动生成用例代码",
+      "programCode": "判题程序代码",
+      "tpId": "编号",
+      "programLang": "语言",
+      "cancel": "取消选择"
     },
     "recordForTeacher": {
       "onlyDone": "仅查看已完成记录",
       "searchQuestion": "搜索题目标题",
-      "title": "查看学生代码"
+      "title": "查看学生代码",
+      "crId": "答题编号",
+      "realName": "学生姓名",
+      "topic": "题目",
+      "mem": "内存",
+      "time": "时间",
+      "date": "完成时间",
+      "status": "状态",
+      "operate": "操作",
+      "checkCode": "查看代码",
+      "ok": "确定"
     },
     "module": {
       "module": "课程总览",
@@ -205,7 +254,15 @@
       "inputRealName": "请输入真实姓名",
       "inputEmail": "请输入登录邮箱",
       "invalidEmail": "登录邮箱格式不正确",
-      "inputCode": "请输入验证码"
+      "inputCode": "请输入验证码",
+      "unverifyEmail": "邮箱未验证",
+      "wrongCode": "验证码错误",
+      "toLogin": "账号生成成功，请登录",
+      "hasSigned2": "已注册，若不是本人，请及时联系管理员",
+      "hasSigned": "已注册",
+      "sendEmail": "邮件已发送",
+      "sendFail": "邮件发送失败",
+      "hasSent": "邮件之前已发送"
     },
     "personal": {
       "guestInfo": "完善信息后，将成为正式用户，只有正式用户才可以参与该系统",
@@ -232,7 +289,16 @@
       "verifyEmail": "请验证邮箱",
       "send": "发送",
       "inputCode": "请输入验证码",
-      "changePassSucceed": "修改密码成功"
+      "changePassSucceed": "修改密码成功",
+      "hint": "提示",
+      "reviseCancel": "修改取消",
+      "errorCode": "验证码错误",
+      "cancelInput": "取消输入",
+      "cancelVerify": "取消验证",
+      "emailSuccess": "邮件发送成功",
+      "emailFail": "邮件发送失败",
+      "emailHasBeenSend": "邮件之前已发送",
+      "changeSuccess": "个人信息修改成功！"
     },
     "codingTest": {
       "createFileSucceed":"创建文件成功",
