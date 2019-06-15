@@ -25,6 +25,14 @@
       "register": "点我注册",
       "verify": "点我注册帐号"
     },
+    "sidebar": {
+      "onlineCoding": "在线编程",
+      "courseLearning": "课程学习",
+      "questLibList": "题库一览",
+      "selfExam": "自考自测",
+      "charts": "成绩分析",
+      "teacherManage": "教师管理"
+    },
     "signUp": {
       "formTitle": "新用户注册",
       "userName": "账户名称",
@@ -242,7 +250,6 @@
       "verifyEmail": "邮箱验证完成才可以进入系统"
     },
     "signUp": {
-      "inputIdNo": "请输入您的身份证号",
       "invalidName": "用户名要求4到16位，由数字、字母或下划线组成",
       "minPassword": "密码不得少于6个字符",
       "inputName": "请输入用户名",

@@ -25,6 +25,14 @@
       "register": "Join us",
       "verify": "Sign up"
     },
+    "sidebar": {
+      "onlineCoding": "Online coding",
+      "courseLearning": "Course Learning",
+      "questLibList": "Question Library",
+      "selfExam": "Self Exam",
+      "charts": "Self Analysis",
+      "teacherManage": "Teacher Manage"
+    },
     "signUp": {
       "formTitle": "UESR REGISTRATION",
       "userName": "Account Name",
@@ -231,6 +239,7 @@
       "notFound": "The account name does not exist or the password is incorrect."
     },
     "signUp": {
+      "inputIdNo": "Please input your ID number.",
       "invalidName": "User names require 4 to 16 bits, consisting of Numbers, letters, or underscores.",
       "minPassword": "Password length must not be less than 6 bits.",
       "inputName": "Please enter the account name.",

@@ -54,60 +54,60 @@ export default {
         {
           icon: 'el-icon-edit',
           index: '4',
-          title: '在线编程',
+          title: this.$t('common.sidebar.onlineCoding'),
           subs: [
             {
               index: 'codingQuestion',
-              title: '编程题列表'
+              title: this.$t('common.codingQuestion.title')
             },
             {
               index: 'codingRecord',
-              title: '答题汇总'
+              title: this.$t('common.codingRecord.title')
             }
           ]
         },
         {
           icon: 'el-icon-date',
           index: '3',
-          title: '课程学习',
+          title: this.$t('common.sidebar.courseLearning'),
           subs: [
             {
               index: 'questLibList',
-              title: '题库一览'
+              title: this.$t('common.sidebar.questLibList')
             },
             {
               index: 'selfExam',
-              title: '自考自测'
+              title: this.$t('common.sidebar.selfExam')
             },
             {
               index: 'charts',
-              title: '成绩分析'
+              title: this.$t('common.sidebar.charts')
             }
           ]
         },
         {
           icon: 'el-icon-tickets',
           index: '2',
-          title: '教师管理',
+          title: this.$t('common.sidebar.teacherManage'),
           subs: [
             {
               index: 'createQuestion',
-              title: '新建编程题'
+              title: this.$t('common.createQuestion.title')
             },
             {
               index: 'createdQuestions',
-              title: '已创建题目'
+              title: this.$t('common.createdQuestions.title')
             },
             {
               index: 'recordForTeacher',
-              title: '查看学生代码'
+              title: this.$t('common.recordForTeacher.title')
             }
           ]
         },
         {
           icon: 'el-icon-setting',
           index: 'personal',
-          title: '个人设置'
+          title: this.$t('common.personal.title')
         }
       ]
     }
