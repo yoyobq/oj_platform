@@ -6,15 +6,15 @@
       </el-breadcrumb>
     </div>
     <div class="codingQuestionContainer">
-      <el-table :data="tableData" style="width: 100%">
-        <el-table-column prop="id" :label="$t('common.codingQuestion.id')">
+      <el-table :data="tableData" style="width: 100%" border>
+        <el-table-column prop="id" :label="$t('common.codingQuestion.id')" width="100">
         </el-table-column>
         <el-table-column :label="$t('common.codingQuestion.topic')">
           <template slot-scope="scope">
             <el-button type="text" @click="selectQuestion(scope.row.id)">{{ scope.row.topic }}</el-button>
           </template>
         </el-table-column>
-        <el-table-column prop="programLang" :label="$t('common.codingQuestion.programLang')">
+        <el-table-column prop="programLang" :label="$t('common.codingQuestion.programLang')" width="200">
         </el-table-column>
       </el-table>
     </div>
@@ -55,6 +55,16 @@ export default{
 
       }
       this.$api.get('codingQuestions', data, res => {
+        for (let item of res) {
+          switch (item.programLang) {
+            case 'js':
+              item.programLang = 'Javascript'
+              break
+            case 'cpp':
+              item.programLang = 'c++'
+              break
+          }
+        }
         this.tableData = res
       }, res => {})
     },
@@ -69,8 +79,7 @@ export default{
 </script>
 <style>
 .codingQuestionContainer {
-  width: 60%;
-  width: 60%;
+  width: 800px;
   padding: 30px;
   background: #fff;
   border: 1px solid #ddd;

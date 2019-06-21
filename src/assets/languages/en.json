@@ -12,7 +12,8 @@
       "logout": "Sign out",
       "tabsOption": "Tab Options",
       "closeOther": "Close Others",
-      "closeAll": "Close All"
+      "closeAll": "Close All",
+      "language": "Chinese/English"
     },
     "loginPage": {
       "formTitle": "XJTLU Online Judge",
@@ -168,7 +169,8 @@
       "status": "Status",
       "operate": "Operation",
       "checkCode": "Check code",
-      "ok": "Ok"
+      "ok": "Ok",
+      "notDone": "not done"
     },
     "module": {
       "module": "Overview",
@@ -316,7 +318,8 @@
       "memLimitForm": "please input number.",
       "inputPreCode": "Please input preset code.",
       "inputPreFuncName": "Please input preset function/method name.",
-      "preFuncNameLength": "The number is between 2 to 50."
+      "preFuncNameLength": "The number is between 2 to 50.",
+      "unlimit": "0 means unlimited"
     },
     "addTest": {
       "inputData": "Please input inputdata.",

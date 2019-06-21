@@ -6,24 +6,24 @@
       </el-breadcrumb>
     </div>
     <div class="codingRecordContainer">
-      <el-table :data="tableData" style="width: 100%">
-        <el-table-column prop="id" :label="$t('common.codingRecord.id')">
+      <el-table :data="tableData" style="width: 100%" border>
+        <el-table-column prop="id" :label="$t('common.codingRecord.id')" width="100">
         </el-table-column>
         <el-table-column prop="topic" :label="$t('common.codingRecord.topic')">
         </el-table-column>
-        <el-table-column :label="$t('common.codingRecord.mem')">
+        <el-table-column :label="$t('common.codingRecord.mem')" width="100">
           <template slot-scope="scope">
             <span>{{ scope.row.memUsage }}kb</span>
           </template>
         </el-table-column>
-        <el-table-column :label="$t('common.codingRecord.time')">
+        <el-table-column :label="$t('common.codingRecord.time')" width="100">
           <template slot-scope="scope">
             <span>{{ scope.row.timeUsage }}ms</span>
           </template>
         </el-table-column>
-        <el-table-column prop="status" :label="$t('common.codingRecord.status')">
+        <el-table-column prop="status" :label="$t('common.codingRecord.status')" width="100">
         </el-table-column>
-        <el-table-column :label="$t('common.codingRecord.operate')">
+        <el-table-column :label="$t('common.codingRecord.operate')" width="200">
           <template slot-scope="scope">
             <el-button
               size="mini"
@@ -108,7 +108,7 @@ export default{
 </script>
 <style>
 .codingRecordContainer {
-  width: 80%;
+  width: 1000px;
   padding: 30px;
   background: #fff;
   border: 1px solid #ddd;

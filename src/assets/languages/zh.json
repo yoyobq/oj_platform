@@ -12,7 +12,8 @@
       "logout": "退出登录",
       "tabsOption": "标签选项",
       "closeOther": "关闭其他",
-      "closeAll": "关闭所有"
+      "closeAll": "关闭所有",
+      "language": "切换中英文"
     },
     "loginPage": {
       "formTitle": "SSTS 智能平台登录",
@@ -167,7 +168,8 @@
       "status": "状态",
       "operate": "操作",
       "checkCode": "查看代码",
-      "ok": "确定"
+      "ok": "确定",
+      "notDone": "未完成"
     },
     "module": {
       "module": "课程总览",
@@ -326,7 +328,8 @@
       "memLimitForm": "请输入数字",
       "inputPreCode": "请输入预置代码",
       "inputPreFuncName": "请输入预定函数/方法名称",
-      "preFuncNameLength": "字数应在2到50个之间"
+      "preFuncNameLength": "字数应在2到50个之间",
+      "unlimit": "0为无限制"
     },
     "addTest": {
       "inputData": "请填写输入数据",

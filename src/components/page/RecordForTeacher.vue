@@ -122,7 +122,7 @@ export default{
       if (item.solveDate !== null) {
         item.solveDate = new Date(item.solveDate).toLocaleString('chinese', { hour12: false })
       } else {
-        item.solveDate = 'not done'
+        item.solveDate = this.$t('common.recordForTeacher.notDone')
       }
     }
     this.totalTableData = this.record.concat()

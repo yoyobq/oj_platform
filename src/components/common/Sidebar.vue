@@ -51,7 +51,7 @@ export default {
         //   title: this.$t('common.mainPage.users'),
         //   limit: 'Admin'
         // },
-        {
+        /* {
           icon: 'el-icon-edit',
           index: '4',
           title: this.$t('common.sidebar.onlineCoding'),
@@ -65,8 +65,8 @@ export default {
               title: this.$t('common.codingRecord.title')
             }
           ]
-        },
-        {
+        }, */
+        /* {
           icon: 'el-icon-date',
           index: '3',
           title: this.$t('common.sidebar.courseLearning'),
@@ -84,8 +84,8 @@ export default {
               title: this.$t('common.sidebar.charts')
             }
           ]
-        },
-        {
+        }, */
+        /* {
           icon: 'el-icon-tickets',
           index: '2',
           title: this.$t('common.sidebar.teacherManage'),
@@ -103,6 +103,26 @@ export default {
               title: this.$t('common.recordForTeacher.title')
             }
           ]
+        }, */
+        {
+          index: 'codingQuestion',
+          title: this.$t('common.codingQuestion.title')
+        },
+        {
+          index: 'codingRecord',
+          title: this.$t('common.codingRecord.title')
+        },
+        {
+          index: 'createQuestion',
+          title: this.$t('common.createQuestion.title')
+        },
+        {
+          index: 'createdQuestions',
+          title: this.$t('common.createdQuestions.title')
+        },
+        {
+          index: 'recordForTeacher',
+          title: this.$t('common.recordForTeacher.title')
         },
         {
           icon: 'el-icon-setting',

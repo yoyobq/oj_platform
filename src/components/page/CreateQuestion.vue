@@ -28,11 +28,11 @@
             <el-option label="c++" value="c++"></el-option>
           </el-select>
         </el-form-item>
-        <el-form-item :label="$t('common.createQuestion.memLimit')" prop="memLimit">
-          <el-input v-model="question.memLimit"></el-input>
+        <el-form-item :label="$t('common.createQuestion.memLimit')" :placeholder="$t('message.createQuestion.unlimit')" prop="memLimit">
+          <el-input v-model="question.memLimit" :placeholder="$t('message.createQuestion.unlimit')" ></el-input>
         </el-form-item>
         <el-form-item :label="$t('common.createQuestion.timeLimit')" prop="timeLimit">
-          <el-input v-model="question.timeLimit"></el-input>
+          <el-input v-model="question.timeLimit" :placeholder="$t('message.createQuestion.unlimit')"></el-input>
         </el-form-item>
         <el-form-item :label="$t('common.createQuestion.preCode')" prop="preCode">
           <el-input type="textarea" v-model="question.preCode" :autosize="{ minRows: 4, maxRows: 7}"></el-input>

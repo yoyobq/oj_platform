@@ -32,6 +32,7 @@
                     <el-dropdown-menu slot="dropdown">
                         <!-- <el-dropdown-item command="name">{{ username }}</el-dropdown-item> -->
                         <el-dropdown-item command="personal">{{$t('common.mainPage.personal')}}</el-dropdown-item>
+                        <el-dropdown-item command="language">{{$t('common.mainPage.language')}}</el-dropdown-item>
                         <!-- <a href="https://github.com/lin-xin/vue-manage-system" target="_blank">
                             <el-dropdown-item>项目仓库</el-dropdown-item>
                         </a> -->
@@ -85,6 +86,24 @@ export default {
       }
       if (command === 'personal') {
         this.$router.push('/personal')
+      }
+      if (command === 'language') {
+        let lang = this.$i18n.locale
+        if (lang === 'en') {
+          localStorage.setItem('locale', 'zh')
+          this.$i18n.locale = localStorage.getItem('locale')
+          this.$message({
+            message: '切换为中文！',
+            type: 'success'
+          })
+        } else if (lang === 'zh') {
+          localStorage.setItem('locale', 'en')
+          this.$i18n.locale = localStorage.getItem('locale')
+          this.$message({
+            message: 'Switch to English!',
+            type: 'success'
+          })
+        }
       }
     },
     // 侧边栏折叠

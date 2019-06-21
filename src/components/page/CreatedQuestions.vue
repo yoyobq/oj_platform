@@ -62,6 +62,16 @@ export default{
         offset: page
       }
       this.$api.get('codingQuestions', data, res => {
+        for (let item of res) {
+          switch (item.programLang) {
+            case 'js':
+              item.programLang = 'Javascript'
+              break
+            case 'cpp':
+              item.programLang = 'c++'
+              break
+          }
+        }
         this.tableData = res
       }, res => {})
     },

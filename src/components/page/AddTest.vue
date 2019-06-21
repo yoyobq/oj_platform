@@ -227,37 +227,36 @@ export default {
   },
   methods: {
     saveForm (formName) {
-      this.$refs[formName].validate((valid) => {
-        if (valid) {
-          if (this.currentRow !== null) {
-            if (this.currentRow.inputDataStructure !== this.test.inputDataStructure && this.currentRow.outputDataStructure !== this.test.outputDataStructure) {
-              this.$message({
-                type: 'error',
-                message: this.$t('message.addTest.notMatch')
-              })
-              return false
-            }
-            if (this.test.programLang !== this.currentRow.programLang) {
-              this.$message({
-                type: 'error',
-                message: this.$t('message.addTest.programLangNotMatch')
-              })
-              return false
-            }
+      return new Promise((resolve, reject) => {
+        if (this.currentRow !== null) {
+          if (this.currentRow.inputDataStructure !== this.test.inputDataStructure && this.currentRow.outputDataStructure !== this.test.outputDataStructure) {
+            this.$message({
+              type: 'error',
+              message: this.$t('message.addTest.notMatch')
+            })
+            resolve(false)
           }
-          for (let i in this.test.inputData) {
-            if (this.test.inputData[i] === '') {
-              this.test.inputData.splice(i, 1)
-              this.test.outputData.splice(i, 1)
-            }
+          if (this.test.programLang !== this.currentRow.programLang) {
+            this.$message({
+              type: 'error',
+              message: this.$t('message.addTest.programLangNotMatch')
+            })
+            resolve(false)
           }
-          let inputData = []
-          let outputData = []
-          for (let i in this.test.inputData) {
-            inputData[i] = JSON.parse(this.test.inputData[i])
-            outputData[i] = JSON.parse(this.test.outputData[i])
+        }
+        for (let i in this.test.inputData) {
+          if (this.test.inputData[i] === '') {
+            this.test.inputData.splice(i, 1)
+            this.test.outputData.splice(i, 1)
           }
-          /* switch (this.test.inputDataStructure) {
+        }
+        let inputData = []
+        let outputData = []
+        for (let i in this.test.inputData) {
+          inputData[i] = JSON.parse(this.test.inputData[i])
+          outputData[i] = JSON.parse(this.test.outputData[i])
+        }
+        /* switch (this.test.inputDataStructure) {
             case 'value':
               for (let i in this.test.inputData) {
                 this.submitInput[i] = parseInt(this.test.inputData[i])
@@ -309,78 +308,83 @@ export default {
             case 'tree':
               break
           } */
-          if (this.isEdit) {
-            let data = {
-              '_csrf': this.$cookies.get('csrfToken'),
-              'data': {
-                inputData: JSON.stringify(inputData),
-                outputData: JSON.stringify(outputData),
-                status: 'done',
-                isAutoBuild: this.test.isAutoBuild,
-                buildingCode: this.test.buildingCode
-              }
+        if (this.isEdit) {
+          let data = {
+            '_csrf': this.$cookies.get('csrfToken'),
+            'data': {
+              inputData: JSON.stringify(inputData),
+              outputData: JSON.stringify(outputData),
+              status: 'edit',
+              isAutoBuild: this.test.isAutoBuild,
+              buildingCode: this.test.buildingCode
             }
-            this.$api.put('testcases/' + this.id, data, res => {
-              if (this.currentRow !== null) {
-                let data = {
-                  '_csrf': this.$cookies.get('csrfToken'),
-                  'data': {
-                    tpId: this.currentRow.id,
-                    status: 'public'
-                  }
-                }
-                this.$api.put('codingQuestions/' + this.cqId, data, res => {
-                  this.$message({
-                    type: 'success',
-                    message: this.$t('message.addTest.changeSucceed')
-                  })
-                }, res => {})
-              } else {
-                this.$message({
-                  type: 'success',
-                  message: this.$t('message.addTest.changeSucceed')
-                })
-              }
-            }, res => {})
-          } else {
-            let data = {
-              '_csrf': this.$cookies.get('csrfToken'),
-              'data': {
-                cqId: this.cqId,
-                inputData: JSON.stringify(inputData),
-                outputData: JSON.stringify(outputData),
-                status: 'done',
-                isAutoBuild: this.test.isAutoBuild,
-                buildingCode: this.test.buildingCode
-              }
-            }
-            this.$api.post('testcases', data, res => {
-              if (this.currentRow !== null) {
-                let data = {
-                  '_csrf': this.$cookies.get('csrfToken'),
-                  'data': {
-                    tpId: this.currentRow.id,
-                    status: 'public'
-                  }
-                }
-                this.$api.put('codingQuestions/' + this.cqId, data, res => {
-                  this.$message({
-                    type: 'success',
-                    message: this.$t('message.addTest.changeSucceed')
-                  })
-                }, res => {})
-              } else {
-                this.$message({
-                  type: 'success',
-                  message: this.$t('message.addTest.changeSucceed')
-                })
-              }
-            }, res => {})
           }
+          this.$api.put('testcases/' + this.id, data, res => {
+            if (this.currentRow !== null) {
+              let data = {
+                '_csrf': this.$cookies.get('csrfToken'),
+                'data': {
+                  tpId: this.currentRow.id
+                }
+              }
+              this.$api.put('codingQuestions/' + this.cqId, data, res => {
+                this.$message({
+                  type: 'success',
+                  message: this.$t('message.addTest.changeSucceed')
+                })
+                resolve(true)
+              }, res => {})
+            } else {
+              this.$message({
+                type: 'success',
+                message: this.$t('message.addTest.changeSucceed')
+              })
+              resolve(true)
+            }
+          }, res => {})
+        } else {
+          let data = {
+            '_csrf': this.$cookies.get('csrfToken'),
+            'data': {
+              cqId: this.cqId,
+              inputData: JSON.stringify(inputData),
+              outputData: JSON.stringify(outputData),
+              status: 'edit',
+              isAutoBuild: this.test.isAutoBuild,
+              buildingCode: this.test.buildingCode,
+              programLang: this.test.programLang
+            }
+          }
+          this.$api.post('testcases', data, res => {
+            this.id = res
+            this.isEdit = true
+            if (this.currentRow !== null) {
+              let data = {
+                '_csrf': this.$cookies.get('csrfToken'),
+                'data': {
+                  tpId: this.currentRow.id
+                }
+              }
+              this.$api.put('codingQuestions/' + this.cqId, data, res => {
+                this.$message({
+                  type: 'success',
+                  message: this.$t('message.addTest.changeSucceed')
+                })
+                resolve(true)
+              }, res => {})
+            } else {
+              this.$message({
+                type: 'success',
+                message: this.$t('message.addTest.changeSucceed')
+              })
+              resolve(true)
+            }
+          }, res => {})
         }
       })
     },
-    createFile () {
+    async createFile () {
+      await this.saveForm()
       let data = {
         '_csrf': this.$cookies.get('csrfToken'),
         'data': {
@@ -402,10 +406,18 @@ export default {
         }
       }
       this.$api.post('createJsFile', data, res => {
-        this.$message({
-          type: 'success',
-          message: this.$t('message.addTest.createFileSucceed')
-        })
+        let data = {
+          '_csrf': this.$cookies.get('csrfToken'),
+          'data': {
+            status: 'public'
+          }
+        }
+        this.$api.put('codingQuestions/' + this.cqId, data, res => {
+          this.$message({
+            type: 'success',
+            message: this.$t('message.addTest.createFileSucceed')
+          })
+        }, res => {})
       }, res => {
       })
     },

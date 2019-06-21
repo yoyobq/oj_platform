@@ -75,7 +75,7 @@ router.beforeEach((to, from, next) => {
 
 // 注册i18n实例，并引入语言文件
 const i18n = new VueI18n({
-  locale: 'zh',
+  locale: localStorage.getItem('locale') || 'zh',
   messages: {
     'zh': require('./assets/languages/zh.json'),
     'en': require('./assets/languages/en.json')
