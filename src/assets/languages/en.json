@@ -74,7 +74,7 @@
       "send": "Send"
     },
     "codingQuestion": {
-      "title": "Coding Question List",
+      "title": "Questions List",
       "id": "Id",
       "topic": "Topic",
       "programLang": "Program Language"
@@ -103,7 +103,7 @@
       "hint": "Hint"
     },
     "codingRecord": {
-      "title": "Coding Record",
+      "title": "My Coding Record",
       "id": "Record ID",
       "topic": "Topic",
       "mem": "Memory",
@@ -124,13 +124,13 @@
       "preCode": "Preset code",
       "preFuncName": "Preset function/method name",
       "submit": "Submit",
-      "title": "Create Question",
+      "title": "Add New Question",
       "editTitle": "Edit Question",
       "cancel": "Cancel",
       "hiddenCode": "Hidden preset code"
     },
     "createdQuestions": {
-      "title": "Created Question",
+      "title": "Edit Questions",
       "edit": "Edit",
       "addTest": "Add test code",
       "id": "ID",
@@ -147,10 +147,11 @@
       "data": "Input and output",
       "save": "Save",
       "createFile": "Create test file",
-      "testProgram": "Choose test program",
-      "byHand": "Add by hand",
+      "testProgram": "Test Program",
+      "manully": "Manully",
       "auto": "Auto",
       "buildingCode": "Auto-building code",
+      "showCode": "Click to show code",
       "programCode": "Program code",
       "tpId": "ID",
       "programLang": "Program Language",
@@ -159,7 +160,7 @@
     "recordForTeacher": {
       "onlyDone": "Only show done record",
       "searchQuestion": "Search question topic",
-      "title": "Check Student records",
+      "title": "Check Stu Code",
       "crId": "ID",
       "realName": "Name",
       "topic": "Topic",

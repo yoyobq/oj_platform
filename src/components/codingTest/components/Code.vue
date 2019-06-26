@@ -58,6 +58,10 @@ export default {
   .CodeMirror pre{
     color: white;
   }
+
+  .CodeMirror-cursor {
+    border-left: 1px solid white !important;
+  }
   .cm-s-default .cm-variable-2{
     color: #9dceff;
   }

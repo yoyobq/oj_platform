@@ -4,7 +4,7 @@
         <div class="collapse-btn" @click="collapseChage">
             <i class="el-icon-menu"></i>
         </div>
-        <div class="logo">SSTS 智能教学平台</div>
+        <div class="logo">CSSE ONLINE JUDGE</div>
         <div class="header-right">
             <div class="header-user-con">
                 <!-- 全屏显示 -->
@@ -12,15 +12,6 @@
                     <el-tooltip effect="dark" :content="isFullScreen()" placement="bottom">
                         <i class="el-icon-rank"></i>
                     </el-tooltip>
-                </div>
-                <!-- 消息中心 -->
-                <div class="btn-bell">
-                    <el-tooltip effect="dark" :content="message?`有${message}条未读消息`:`消息中心`" placement="bottom">
-                        <router-link to="/messages">
-                            <i class="el-icon-bell"></i>
-                        </router-link>
-                    </el-tooltip>
-                    <span class="btn-bell-badge" v-if="message"></span>
                 </div>
                 <!-- 用户头像 -->
                 <div class="user-avator"><img :src="avatarPic"></div>
@@ -33,9 +24,6 @@
                         <!-- <el-dropdown-item command="name">{{ username }}</el-dropdown-item> -->
                         <el-dropdown-item command="personal">{{$t('common.mainPage.personal')}}</el-dropdown-item>
                         <el-dropdown-item command="language">{{$t('common.mainPage.language')}}</el-dropdown-item>
-                        <!-- <a href="https://github.com/lin-xin/vue-manage-system" target="_blank">
-                            <el-dropdown-item>项目仓库</el-dropdown-item>
-                        </a> -->
                         <el-dropdown-item divided command="loginout">{{$t('common.mainPage.logout')}}</el-dropdown-item> 
                     </el-dropdown-menu>
                 </el-dropdown>

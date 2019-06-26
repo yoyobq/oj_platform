@@ -1,7 +1,7 @@
 {
   "common": {
     "mainPage":{
-      "title": "管理系统",
+      "title": "在线编程测试",
       "fullScreen": "全屏",
       "cancelFull": "取消全屏",
       "unread": "条未读消息",
@@ -16,7 +16,7 @@
       "language": "切换中英文"
     },
     "loginPage": {
-      "formTitle": "SSTS 智能平台登录",
+      "formTitle": "在线编程测试系统",
       "tabsAccount": "帐号登录",
       "tabsEmail": "邮箱登录",
       "password": "密码",

@@ -1,58 +1,90 @@
 <template>
   <div class="login-wrap">
+    <chkInfo :chkInfoShow="chkInfoShow" @update:chkInfoShow="chkInfoShow = $event" :data="stuInfo" @update:chkedInfo="chkedInfo = $event"></chkInfo>
+    <createForm :createShow="createShow" @update:createShow="createShow = $event" :data="chkedInfo"></createForm>
   </div>
 </template>
 
 <script>
-// const crypto = require('crypto')
-const mailer = require('nodemailer')
 export default {
+  name: 'signUpByMail',
+  components: {
+    'chkInfo': resolve => { require(['@/components/signUp/byMail/chkInfoDialog.vue'], resolve) },
+    'createForm': resolve => { require(['@/components/signUp/byMail/createForm.vue'], resolve) }
+  },
   data: function () {
     return {
-      activeName: 'email',
-      loginForm: {
-        username: '',
-        password: ''
-      },
-      rules: {
-        username: [
-          { required: true, message: this.$t('message.loginPage.inputName'), trigger: 'blur' }
-        ],
-        password: [
-          { required: true, message: this.$t('message.loginPage.inputPassword'), trigger: 'blur' }
-        ]
-      },
-      mailLoginForm: {
-        usermail: '',
-        password: ''
-      },
-      mailRules: {
-        usermail: [
-          { required: true, message: this.$t('message.loginPage.inputMail'), trigger: 'blur' },
-          { type: 'email', message: this.$t('message.loginPage.validMail'), trigger: 'blur' }
-        ],
-        password: [
-          { required: true, message: this.$t('message.loginPage.inputPassword'), trigger: 'blur' }
-        ]
-      }
+      idNumber: '',
+      stuInfo: [],
+      chkedInfo: null,
+      chkInfoShow: false,
+      createShow: true
     }
   },
   created () {
-    this.sendMail()
+    // this.checkId()
+  },
+  watch: {
+    chkInfoShow: function () {
+      if (this.chkInfoShow === false) {
+        if (this.chkedInfo !== null) {
+          // console.log(this.chkedInfo)
+          this.signUp()
+        } else {
+          this.checkId()
+        }
+      }
+    },
+    createShow: function () {
+      if (this.createShow === false && this.chkedInfo !== null) {
+        this.checkInfo()
+      } else {
+        this.signUp()
+      }
+    }
   },
   methods: {
-    open3 () {
-      this.$prompt('请输入邮箱', '提示', {
+    // 2 显示核对个人信息dialog
+    checkInfo () {
+      this.chkInfoShow = true
+    },
+    // 3 根据chkedInfo注册账户
+    signUp () {
+      this.createShow = true
+    },
+    // 1 弹出输入身份证并检查对应信息messagebox
+    checkId () {
+      this.chkedInfo = null
+      this.stuInfo = null
+      console.log('320586200001043618') // 此号码旧数据中有冗余
+      // this.$prompt(this.$t('message.signUp.inputIdNo'), '第 1 步（共 3 步）', {
+      this.$prompt('', '第 1 步（共 3 步）：' + this.$t('message.signUp.inputIdNo'), {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
-        inputPattern: /[\w!#$%&'*+/=?^_`{|}~-]+(?:\.[\w!#$%&'*+/=?^_`{|}~-]+)*@(?:[\w](?:[\w-]*[\w])?\.)+[\w](?:[\w-]*[\w])?/,
-        inputErrorMessage: '邮箱格式不正确'
+        // 大陆18位  |  大陆 15位 | 香港 | 台湾 | 澳门
+        inputPattern: /(^[1-9]\d{5}(18|19|([23]\d))\d{2}((0[1-9])|(10|11|12))(([0-2][1-9])|10|20|30|31)\d{3}[0-9Xx]$)|(^[1-9]\d{5}\d{2}((0[1-9])|(10|11|12))(([0-2][1-9])|10|20|30|31)\d{2}[0-9Xx]$)|([A-Z]{1,2}[0-9]{6}([0-9A]))|([A-Z][0-9]{9})|(^[1|5|7][0-9]{6}\([0-9Aa]\))/,
+        inputErrorMessage: '身份证号不完整或格式不正确',
+        closeOnClickModal: false,
+        closeOnPressEscape: false
       }).then(({ value }) => {
-        this.$message({
-          type: 'success',
-          message: '你的邮箱是: ' + value
+        this.idNumber = value
+        let data = {
+          '证件号码': this.idNumber
+        }
+        this.$api.get('stuFullInfos', data, res => {
+          // 注意，这里返回了一个json数组
+          // console.log(res)
+          this.stuInfo = res
+          this.checkInfo()
+        }, res => {
+          // console.log(res)
+          this.$message({
+            duration: 6000,
+            message: res.data.error,
+            type: 'warning'
+          })
+          this.checkId()
         })
-        // this.sendMail()
       }).catch(() => {
         this.$message({
           type: 'info',
@@ -60,41 +92,20 @@ export default {
         })
         this.$router.push('/login')
       })
-    },
-    aa () {
-      var transporter = mailer.createTransport({
-        service: 'qq',
-        auth: {
-          user: '527828938@qq.com',
-          pass: 'ugxovfwhvxxxxxx' // 授权码,通过QQ获取
-
-        }
-      })
-      var mailOptions = {
-        from: '527828938@qq.com', // 发送者
-        to: '452076103@qq.com', // 接受者,可以同时发送多个,以逗号隔开
-        subject: 'nodemailer2.5.0邮件发送', // 标题
-        text: 'Hello world' // 文本
-        // html: 'hi'
-      }
-
-      transporter.sendMail(mailOptions, function (err, info) {
-        if (err) {
-          console.log(err)
-          return
-        }
-        console.log('发送成功')
-      })
     }
   }
 }
 </script>
 
 <style scoped>
-.login-wrap{
+/* .login-wrap{
     position: relative;
     width:100%;
     height:100%;
     background-color: #324157;
+} */
+
+.el-message {
+  z-index: 999;
 }
 </style>

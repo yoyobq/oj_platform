@@ -40,87 +40,28 @@ export default {
       collapse: false,
       // 目前采用了固定菜单的形式，从长远看，菜单应该也从数据库获取
       items: [
-        // {
-        //   icon: 'el-icon-star-on',
-        //   index: 'dashboard',
-        //   title: '平台首页'
-        // },
-        // {
-        //   icon: 'el-icon-share',
-        //   index: 'users',
-        //   title: this.$t('common.mainPage.users'),
-        //   limit: 'Admin'
-        // },
-        /* {
-          icon: 'el-icon-edit',
-          index: '4',
-          title: this.$t('common.sidebar.onlineCoding'),
-          subs: [
-            {
-              index: 'codingQuestion',
-              title: this.$t('common.codingQuestion.title')
-            },
-            {
-              index: 'codingRecord',
-              title: this.$t('common.codingRecord.title')
-            }
-          ]
-        }, */
-        /* {
-          icon: 'el-icon-date',
-          index: '3',
-          title: this.$t('common.sidebar.courseLearning'),
-          subs: [
-            {
-              index: 'questLibList',
-              title: this.$t('common.sidebar.questLibList')
-            },
-            {
-              index: 'selfExam',
-              title: this.$t('common.sidebar.selfExam')
-            },
-            {
-              index: 'charts',
-              title: this.$t('common.sidebar.charts')
-            }
-          ]
-        }, */
-        /* {
-          icon: 'el-icon-tickets',
-          index: '2',
-          title: this.$t('common.sidebar.teacherManage'),
-          subs: [
-            {
-              index: 'createQuestion',
-              title: this.$t('common.createQuestion.title')
-            },
-            {
-              index: 'createdQuestions',
-              title: this.$t('common.createdQuestions.title')
-            },
-            {
-              index: 'recordForTeacher',
-              title: this.$t('common.recordForTeacher.title')
-            }
-          ]
-        }, */
         {
+          icon: 'el-icon-star-on',
           index: 'codingQuestion',
           title: this.$t('common.codingQuestion.title')
         },
         {
+          icon: 'el-icon-edit',
           index: 'codingRecord',
           title: this.$t('common.codingRecord.title')
         },
         {
+          icon: 'el-icon-share',
           index: 'createQuestion',
           title: this.$t('common.createQuestion.title')
         },
         {
+          icon: 'el-icon-date',
           index: 'createdQuestions',
           title: this.$t('common.createdQuestions.title')
         },
         {
+          icon: 'el-icon-tickets',
           index: 'recordForTeacher',
           title: this.$t('common.recordForTeacher.title')
         },
