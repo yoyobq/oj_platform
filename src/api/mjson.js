@@ -24,28 +24,33 @@ const f = (jsonObj) => {
 //   return JSON.stringify(result)
 // }
 
-// const mergeArr = (arr1, arr2) => {
-//   let merge = []
-//   let kvIndex = {}
-//   for (var i = 0; i < arr1.length; i++) {
-//     for (var j = 0; j < arr2.length; j++) {
-//       if (arr1[i].id === arr2[j].id) {
-//         var item
-//         if (kvIndex[arr1[i].id] === undefined) {
-//           kvIndex[arr1[i].id] = merge.length
-//           item = {}
-//           for (var attr in arr1[i]) item[attr] = arr1[i][attr]
-//           merge[kvIndex[arr1[i].id]] = item
-//         } else item = merge[kvIndex[arr1[i].id]]
-//         for (var attr in arr2[j]) item[attr] = arr2[j][attr]
-//       }
-//     }
-//   }
-// }
+// _.map()
+// 将数组或对象中的所有项转换为项的新数组。
+// Underscore/Lodash
+// ES6 已有 map
+/*
+var array1 = [1, 2, 3]
+var array2 = _.map(array1, function (value, index) {
+  return value * 2
+})
+console.log(array2)
+// output: [2, 4, 6]
+
+// Native
+var array1 = [1, 2, 3]
+var array2 = array1.map(function (value, index) {
+  return value * 2
+})
+console.log(array2)
+// output: [2, 4, 6]
+*/
 
 // 计算数组中特定值出现的次数
 const countOccurences = (arr, value) => arr.reduce((a, v) => v === value ? a + 1 : a + 0, 0)
 
+// export {
+//   mergeObjArr
+// }
 export default {
   f: function (jsonObj) {
     return f(jsonObj)

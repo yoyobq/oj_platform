@@ -57,10 +57,13 @@ export default{
   methods: {
     getQuestions (page) {
       let data = {
-        uId: sessionStorage.getItem('id'),
+        where: {
+          uId: sessionStorage.getItem('id')
+        },
         limit: 10,
         offset: page
       }
+      data.where = JSON.stringify(data.where)
       this.$api.get('codingQuestions', data, res => {
         for (let item of res) {
           switch (item.programLang) {

@@ -329,7 +329,7 @@ export default{
   }
 }
 </script>
-<style>
+<style scoped>
 .codingRecordContainer {
   width: 80%;
   padding: 30px;

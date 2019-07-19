@@ -8,7 +8,7 @@ export default new Router({
   routes: [
     {
       path: '/',
-      redirect: '/codingQuestion'
+      redirect: 'codingQuestionsList'
     },
     {
       path: '/',
@@ -17,12 +17,14 @@ export default new Router({
       children: [
         {
           path: '/personal',
+          name: 'personal',
           component: resolve => require(['../components/page/Personal.vue'], resolve),
           meta: { title: '个人设置' }
         },
         {
-          path: '/codingQuestion',
-          component: resolve => require(['../components/codingQuestSet/CodingQuestion.vue'], resolve),
+          path: '/codingQuestionsList',
+          name: 'codingQuestionsList',
+          component: resolve => require(['../components/codingTest/CodingQuestionsList.vue'], resolve),
           meta: { title: '浏览题目' }
         },
         {
@@ -31,8 +33,9 @@ export default new Router({
           meta: { title: '编程测试' }
         },
         {
-          path: '/codingRecord',
-          component: resolve => require(['../components/codingQuestSet/CodingRecord.vue'], resolve),
+          path: '/myCodingRecords',
+          name: 'myCodingRecords',
+          component: resolve => require(['../components/codingQuestSet/MyCodingRecords.vue'], resolve),
           meta: { title: '我的题目' }
         },
         {

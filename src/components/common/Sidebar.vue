@@ -42,12 +42,12 @@ export default {
       items: [
         {
           icon: 'el-icon-star-on',
-          index: 'codingQuestion',
+          index: 'codingQuestionsList',
           title: this.$t('common.codingQuestion.title')
         },
         {
           icon: 'el-icon-edit',
-          index: 'codingRecord',
+          index: 'myCodingRecords',
           title: this.$t('common.codingRecord.title')
         },
         {

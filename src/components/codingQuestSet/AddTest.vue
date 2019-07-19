@@ -31,7 +31,7 @@
               <li>例2: 初始代码需要的数据是数组:如 foo(array) 则input数据也提供数组 [1,2,3,'d']</li>
               <li>例3: 初始代码需要的数据是组合数据:如 foo(array, number) 则input数据为 [1,2,3,'d'], 4 用逗号做间隔即可</li>
               <li>output的内容直接填写程序执行后预期应得到的结果</li>
-              <li>提交时，请检查字符串的 ' ' ，数组的 [ ] ，对象的 { } 是否编辑正确，数据间是否用逗号做了正确的间隔，并避免使用中文的全角符号</li>
+              <li>提交时，请检查字符串的 " " ，数组的 [ ] ，对象的 { } 是否编辑正确，数据间是否用逗号做了正确的间隔，并避免使用中文的全角符号</li>
             </ul>
            </div>
         </el-form-item>
@@ -194,21 +194,6 @@ export default {
   },
   computed: {
   },
-  watch: {
-    auto: function (val) {
-      if (val === true) {
-        this.num = 0
-        this.test.isAutoBuild = 1
-      } else {
-        this.test.isAutoBuild = 0
-        if (this.test.inputData.length > 0) {
-          this.num = this.test.inputData.length
-        } else {
-          this.num = 1
-        }
-      }
-    }
-  },
   methods: {
     mergeTestCases (inputData, outputData) {
       if (inputData !== null) {
@@ -368,45 +353,6 @@ export default {
         console.log('create cancel')
       }
     },
-    async createFile () {
-      await this.saveForm()
-      let data = {
-        '_csrf': this.$cookies.get('csrfToken'),
-        'data': {
-          status: 'done'
-        }
-      }
-
-      this.$api.put('testcases/' + this.id, data, res => {}, res => {
-        this.$message({
-          type: 'error',
-          message: this.$t('message.addTest.testcaseNotFound')
-        })
-      })
-      data = {
-        '_csrf': this.$cookies.get('csrfToken'),
-        'data': {
-          type: 'testcases', // 指定要生成的文件类型
-          id: this.id // 此处为 testcases表中的 id
-          // 无需指定编程语言，会根据上 表中记录自动匹配
-        }
-      }
-      this.$api.post('createJsFile', data, res => {
-        let data = {
-          '_csrf': this.$cookies.get('csrfToken'),
-          'data': {
-            status: 'public'
-          }
-        }
-        this.$api.put('codingQuestions/' + this.cqId, data, res => {
-          this.$message({
-            type: 'success',
-            message: this.$t('message.addTest.createFileSucceed')
-          })
-        }, res => {})
-      }, res => {
-      })
-    },
     cancel () {
       this.$router.push('/createdQuestions')
     },
@@ -420,58 +366,7 @@ export default {
     },
     handleDelete (index, row) {
       this.testcases.mergedCases.splice(index, 1)
-    },
-    changeInput () {
-      // switch (this.test.inputDataStructure) {
-      //   case 'array': this.inputPlaceHolder = '[1,2,3]'
-      //     break
-      //   case 'value': this.inputPlaceHolder = '1'
-      // }
-      if (this.currentRow !== null) {
-        if (this.test.inputDataStructure !== this.currentRow.inputDataStructure) {
-          this.currentRow = null
-          this.$message({
-            type: 'error',
-            message: this.$t('message.addTest.notMatch')
-          })
-          this.setCurrent()
-        }
-      }
-    },
-    changeOutput () {
-      switch (this.test.outputDataStructure) {
-        case 'value': this.outputPlaceHolder = '1'
-          break
-        case 'array': this.outputPlaceHolder = '[1,2,3]'
-          break
-      }
-      if (this.currentRow !== null) {
-        if (this.test.outputDataStructure !== this.currentRow.outputDataStructure) {
-          this.currentRow = null
-          this.$message({
-            type: 'error',
-            message: this.$t('message.addTest.notMatch')
-          })
-          this.setCurrent()
-        }
-      }
-    },
-    handleCurrentChange (val) {
-      if (val !== undefined) {
-        if (val.inputDataStructure === this.test.inputDataStructure && val.outputDataStructure === this.test.outputDataStructure && this.test.programLang === val.programLang) {
-          this.currentRow = val
-        } else {
-          this.$message({
-            type: 'error',
-            message: this.$t('message.addTest.notMatch')
-          })
-          this.setCurrent()
-        }
-      }
     }
-    // setCurrent (row) {
-    //   this.$refs.singleTable.setCurrentRow(row)
-    // }
   }
 }
 </script>

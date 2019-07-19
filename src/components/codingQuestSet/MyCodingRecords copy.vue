@@ -85,8 +85,11 @@ export default{
     getRecord () {
       return new Promise((resolve, reject) => {
         let data = {
-          uId: this.uId
+          where: {
+            uId: this.uId
+          }
         }
+        data.where = JSON.stringify(data.where)
         this.$api.get('codingRecords', data, res => {
           resolve(res)
         }, res => {

@@ -75,9 +75,9 @@
     },
     "codingQuestion": {
       "title": "Questions List",
-      "id": "Id",
+      "id": "ID",
       "topic": "Topic",
-      "programLang": "Program Language"
+      "programLang": "PL"
     },
     "codingTest": {
       "title": "Coding Test",
@@ -154,12 +154,12 @@
       "showCode": "Click to show code",
       "programCode": "Program code",
       "tpId": "ID",
-      "programLang": "Program Language",
+      "programLang": "PL",
       "cancel": "Cancel selected"
     },
     "recordForTeacher": {
       "onlyDone": "Only show done record",
-      "searchQuestion": "Search question topic",
+      "searchQuestion": "Search topics by keyword",
       "title": "Check Stu Code",
       "crId": "ID",
       "realName": "Name",
