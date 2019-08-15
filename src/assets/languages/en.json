@@ -118,7 +118,7 @@
       "topic": "Topic",
       "describe": "Describe",
       "hint": "Hint",
-      "programLang": "Program Language",
+      "programLang": "PL",
       "memLimit": "Memory limit(kb)",
       "timeLimit": "Time limit(毫秒)",
       "preCode": "Preset code",
@@ -135,7 +135,7 @@
       "addTest": "Add test code",
       "id": "ID",
       "topic": "Topic",
-      "programLang": "Program Language",
+      "programLang": "PL",
       "status": "Status",
       "operate": "Operation"
     },

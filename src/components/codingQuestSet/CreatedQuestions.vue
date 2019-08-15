@@ -1,22 +1,36 @@
 <template>
   <div class="createQuestionsTable">
+    <!-- 面包屑 -->
     <div class="crumbs">
       <el-breadcrumb separator="/">
         <el-breadcrumb-item><i class="el-icon-edit"></i>{{$t('common.createdQuestions.title')}}</el-breadcrumb-item>
       </el-breadcrumb>
     </div>
+
+    <!-- 列表 -->
     <div class="createQuestionsContainer">
       <el-table :data="tableData" style="width: 100%">
-        <el-table-column prop="id" :label="$t('common.createdQuestions.id')">
+        <el-table-column prop="id" :label="$t('common.createdQuestions.id')" width="50">
         </el-table-column>
-        <el-table-column :label="$t('common.createdQuestions.topic')">
-          <template slot-scope="scope">
+        <el-table-column prop="topic" :label="$t('common.createdQuestions.topic')" width="450">
+          <!-- <template slot-scope="scope">
             <el-button type="text" @click="selectQuestion(scope.row.id)">{{ scope.row.topic }}</el-button>
+          </template> -->
+        </el-table-column>
+        <el-table-column :label="$t('common.createdQuestions.programLang')" width="100">
+          <template slot-scope="scope">
+            <el-tag v-if="scope.row.programLang === 'js'" type="success" >{{ showTag(scope.row) }}</el-tag>
+            <el-tag v-if="scope.row.programLang === 'cpp'" type="error" >{{ showTag(scope.row) }}</el-tag>
+            <el-tag v-if="scope.row.programLang === 'c'" type="error" >{{ showTag(scope.row) }}</el-tag>
+            <el-tag v-if="scope.row.programLang === 'java'" >{{ showTag(scope.row) }}</el-tag>
           </template>
         </el-table-column>
-        <el-table-column prop="programLang" :label="$t('common.createdQuestions.programLang')">
-        </el-table-column>
-        <el-table-column prop="status" :label="$t('common.createdQuestions.status')">
+        <el-table-column prop="status" :label="$t('common.createdQuestions.status')" width="100">
+          <template slot-scope="scope">
+            <el-tag v-if="scope.row.status === 'public'">Publicized</el-tag>
+            <el-tag v-if="scope.row.status === 'edit'" type="warning">Editing</el-tag>
+            <el-tag v-if="scope.row.status === 'close'" type="danger">Closed</el-tag>
+          </template>
         </el-table-column>
         <el-table-column :label="$t('common.createdQuestions.operate')">
           <template slot-scope="scope">
@@ -26,57 +40,73 @@
         </el-table-column>
       </el-table>
     </div>
+
+    <!-- 分页条 -->
     <el-pagination
+      v-if=" pageTotal/pageSize >= 1"
       background
       @current-change="handleCurrentChange"
       layout="prev, pager, next"
-      :page-size="10"
-      :total="pageCount">
+      :page-size="pageSize"
+      :total="pageTotal">
     </el-pagination>
   </div>
 </template>
 <script>
 export default{
+  name: 'CreatedQuestions',
   data () {
     return {
       tableData: [],
-      pageCount: 100
+      pageTotal: 0,
+      pageSize: 10,
+      uId: sessionStorage.getItem('id')
     }
   },
   created () {
-    let data = {
-      uId: sessionStorage.getItem('id')
-    }
-    this.$api.get('codingQuestions/count', data, res => {
-      this.pageCount = res
-      this.getQuestions(0)
-    }, res => {
-      console.log(res.data)
-    })
+    this.getData()
   },
   methods: {
-    getQuestions (page) {
-      let data = {
-        where: {
-          uId: sessionStorage.getItem('id')
-        },
-        limit: 10,
-        offset: page
+    async getData () {
+      this.pageTotal = await this.getListLength()
+      console.log(this.pageTotal)
+      // 默认显示从首页开始的10个条目
+      // 获取对应的 quetions 数据
+      if (this.pageTotal !== 0) {
+        this.tableData = await this.getQuestions(0, this.pageSize)
+      } else {
+        this.tableData = []
       }
-      data.where = JSON.stringify(data.where)
-      this.$api.get('codingQuestions', data, res => {
-        for (let item of res) {
-          switch (item.programLang) {
-            case 'js':
-              item.programLang = 'Javascript'
-              break
-            case 'cpp':
-              item.programLang = 'c++'
-              break
+    },
+    getListLength () {
+      return new Promise((resolve, reject) => {
+        let data = {
+          where: {
+            uId: this.uId
           }
         }
-        this.tableData = res
-      }, res => {})
+        data.where = JSON.stringify(data.where)
+        this.$api.get('codingQuestions/count', data, res => {
+          resolve(res)
+        }, res => {
+          resolve(0)
+        })
+      })
+    },
+    getQuestions (offset, limit) {
+      return new Promise((resolve, reject) => {
+        let data = {
+          where: {
+            uId: sessionStorage.getItem('id')
+          },
+          limit,
+          offset
+        }
+        data.where = JSON.stringify(data.where)
+        this.$api.get('codingQuestions', data, res => {
+          this.tableData = res
+        }, res => { console.log('error:' + res) })
+      })
     },
     selectQuestion (id) {
       this.$router.push('/codingTest?id=' + id)
@@ -102,6 +132,20 @@ export default{
           id: id
         }
       })
+    },
+    showTag (row) {
+      switch (row.programLang) {
+        case 'js':
+          return 'Javascript'
+        case 'cpp':
+          return 'C++'
+        case 'c':
+          return 'C program'
+        case 'java':
+          return 'Java'
+        default:
+          return row.programLang
+      }
     }
   }
 }

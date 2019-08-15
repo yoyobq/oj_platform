@@ -8,12 +8,13 @@
     </div> -->
 
     <!-- 搜索框 -->
-    <el-input :placeholder="$t('common.recordForTeacher.searchQuestion')" v-model.trim="searchInput" class="search-input" @change="questSearch"></el-input>
-    <el-button icon="el-icon-search" @click="questSearch" type="primary"></el-button>
-
+    <div class="search-box">
+      <el-input :placeholder="$t('common.recordForTeacher.searchQuestion')" v-model.trim="searchInput" class="search-input" @change="questSearch"></el-input>
+      <el-button icon="el-icon-search" @click="questSearch" type="primary"></el-button>
+    </div>
     <!-- 筛选标签 -->
-    <el-row>
-      <el-col :span="10" class="category-tags">
+    <el-row class="category-tags">
+      <el-col :span="10">
         <el-tag
           class="pt-tags"
           v-for="item in ptTags"
@@ -62,6 +63,7 @@
 </template>
 <script>
 export default{
+  name: 'CodingQuestionsList',
   data () {
     return {
       tableData: [],
@@ -90,8 +92,8 @@ export default{
         this.pageTotal = await this.getListLength()
         // 默认显示从首页开始的10个条目
         // getQuestions时有一个隐藏的参数，即ptShowList，请注意
-        console.log(this.ptShowList)
-        console.log(this.pageTotal)
+        // console.log(this.ptShowList)
+        // console.log(this.pageTotal)
         // 获取对应的 quetions 数据
         if (this.pageTotal !== 0) {
           this.questions = await this.getQuestions(0, this.pageSize)
@@ -289,8 +291,12 @@ export default{
 }
 </script>
 <style scoped>
+.search-box {
+  min-width: 500px;
+}
 .category-tags {
   margin-bottom: 20px;
+  min-width: 860px;
 }
 .codingQuestionContainer {
   width: 960px; 

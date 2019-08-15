@@ -8,12 +8,14 @@
     </div>
 
     <!-- 搜索框 -->
-    <el-input :placeholder="$t('common.recordForTeacher.searchQuestion')" v-model.trim="searchInput" class="search-input" @change="questSearch"></el-input>
-    <el-button icon="el-icon-search" @click="questSearch" type="primary"></el-button>
+    <div class="search-box">
+      <el-input :placeholder="$t('common.recordForTeacher.searchQuestion')" v-model.trim="searchInput" class="search-input" @change="questSearch"></el-input>
+      <el-button icon="el-icon-search" @click="questSearch" type="primary"></el-button>
+    </div>
 
     <!-- 筛选标签 -->
-    <el-row>
-      <el-col :span="10" class="category-tags">
+    <el-row class="category-tags">
+      <el-col :span="10">
         <el-tag
           class="pt-tags"
           v-for="item in ptTags"
@@ -30,8 +32,17 @@
     <!-- 题目列表 -->
     <div class="codingQuestionContainer">
       <el-table :data="tableData" class="quest-list" border empty-text="No Coding Questions"
-                @row-click="selectQuestion" header-cell-class-name="quest-list-header">
+                @row-click="selectQuestion" header-cell-class-name="quest-list-header"
+                :default-sort = "{prop: 'status', order: 'descending'}">
         <el-table-column prop="id" :label="$t('common.codingQuestion.id')" width="50" align="center"></el-table-column>
+        <el-table-column prop="status" label="status" align="center" width="100" sortable>
+          <template slot-scope="scope">
+            <el-tag v-if="scope.row.status === 'done'" type="success">Solved</el-tag>
+            <el-tag v-if="scope.row.status === 'unsolved'" type="warning">Unsolved</el-tag>
+            <el-tag v-if="scope.row.status === 'timeout'" type="danger">Timeout</el-tag>
+            <!-- <el-tag v-if="scope.row.status === 'ignore'" type="error">Ignore</el-tag> -->
+          </template>
+        </el-table-column>
         <el-table-column prop="topic" :label="$t('common.codingQuestion.topic')" header-align="center" >
           <template slot-scope="scope">
             <el-link :underline="false" type="success" @click="selectQuestion(scope.row.id)">{{ scope.row.topic }}</el-link>
@@ -96,11 +107,8 @@ export default{
         // 获取对应的 quetions 数据
         if (this.pageTotal !== 0) {
           this.questions = await this.getQuestions(0, this.pageSize)
-          // 计算正确率，并赋值给表格
-          // 由于callback地狱，不想一层层拿出来了，所以直接在函数中就赋值了
-          // 最优的做法应该是return个结果，然后在此赋值
-          this.getAccuracy()
-          // this.tableData = await this.getAccuracy()
+          // 获取数据并格式化，并提交给页面
+          this.tableData = await this.getMyCodingRecords()
         } else {
           this.tableData = []
         }
@@ -110,9 +118,11 @@ export default{
       return new Promise((resolve, reject) => {
         let data = {
           where: {
-            status: ['unsolved', 'done'],
+            status: ['unsolved', 'done', 'timeout'],
             uId: this.uId
           }
+          // 后台未对orders做处理，当前无效
+          // orders: [['status', 'desc']]
         }
         data.where = JSON.stringify(data.where)
         this.$api.get('codingRecords', data, res => {
@@ -151,54 +161,56 @@ export default{
       })
     },
 
-    // 计算页面中出现各题的准确率
-    getAccuracy () {
-      let result = []
-      // 获取页面中显示题目的id列
-      this.questions.map(item => {
-        result.push(item.id)
-      })
-
-      // 根据 id 列获取数据库中的 codingRecords 信息
-      let data = {
-        where: {
-          uId: this.uId,
-          cqId: result,
-          status: ['unsolved', 'done']
-        }
-      }
-      data.where = JSON.stringify(data.where)
-      this.$api.get('codingRecords', data, res => {
-        // 简化 codingRcords 信息，仅保留必要的列，并新增 finishTimes 用于记录完成次数
-        res = res.map(item => {
-          return {
-            id: item.cqId,
-            submitTimes: item.submitTimes,
-            status: item.status,
-            startDate: item.startDate,
-            lastModiDate: item.lastModiDate,
-            expireTime: item.expireTime
-          }
+    // 获取与个人有关的作题信息
+    getMyCodingRecords () {
+      return new Promise((resolve, reject) => {
+        let result = []
+        // 获取页面中显示题目的id列
+        this.questions.map(item => {
+          result.push(item.id)
         })
-        // 按id 合并 题目及作题记录
-        let merged = []
-        let allArr = [this.questions, res]
-        allArr.forEach(function (a) {
-          a.forEach(function (b) {
-            if (!this[b.id]) {
-              this[b.id] = {}
-              merged.push(this[b.id])
+
+        // 根据 id 列获取数据库中的 codingRecords 信息
+        let data = {
+          where: {
+            uId: this.uId,
+            cqId: result,
+            status: ['unsolved', 'done', 'timeout']
+          }
+        }
+        data.where = JSON.stringify(data.where)
+        this.$api.get('codingRecords', data, res => {
+          // 简化 codingRcords 信息，仅保留必要的列，并新增 finishTimes 用于记录完成次数
+          res = res.map(item => {
+            return {
+              id: item.cqId,
+              submitTimes: item.submitTimes,
+              status: item.status,
+              startDate: item.startDate,
+              lastModiDate: item.lastModiDate,
+              expireTime: item.expireTime
             }
-            Object.keys(b).forEach(function (k) {
-              this[b.id][k] = b[k]
+          })
+          // 按id 合并 题目及作题记录
+          let merged = []
+          let allArr = [this.questions, res]
+          allArr.forEach(function (a) {
+            a.forEach(function (b) {
+              if (!this[b.id]) {
+                this[b.id] = {}
+                merged.push(this[b.id])
+              }
+              Object.keys(b).forEach(function (k) {
+                this[b.id][k] = b[k]
+              }, this)
             }, this)
-          }, this)
-        }, Object.create(null))
-        // console.table(merged)
-        this.tableData = merged
-      }, res => {
-        // 若没有查到任何作题的信息，当然题目显然是未做过
-        this.tableData = this.questions
+          }, Object.create(null))
+          // console.table(merged)
+          resolve(merged)
+        }, res => {
+          // 这是个临时处理方案，应该写成reject，并放在try...catch中的catch部分
+          resolve()
+        })
       })
     },
     async tagClick (e) {
@@ -263,10 +275,11 @@ export default{
         let timestamp = (new Date()).valueOf()
         const nowTime = (parseInt(timestamp / 1000 / 60))
         const usedTime = nowTime - startTime
+        const leftTime = row.expireTime - usedTime
         if (usedTime > row.expireTime) {
           return 'Overdue'
         } else {
-          console.log('exprie')
+          return Math.floor(leftTime / 60 / 24) + ' day'
         }
       }
     },
@@ -295,8 +308,12 @@ export default{
 }
 </script>
 <style scoped>
+.search-box {
+  min-width: 500px;
+}
 .category-tags {
   margin-bottom: 20px;
+  min-width: 860px;
 }
 .codingQuestionContainer {
   width: 960px; 
