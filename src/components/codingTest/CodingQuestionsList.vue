@@ -258,7 +258,7 @@ export default{
       this.$router.push('/codingTest?id=' + id)
     },
     handleCurrentChange (val) {
-      this.getQuestions((val - 1) * 10)
+      this.getQuestions((val - 1) * this.pageSize, this.pageSize)
     },
     // handleClick (row) {
     //   console.log(row)

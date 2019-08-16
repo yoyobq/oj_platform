@@ -1,17 +1,20 @@
 <template>
   <div class="codingRecordTable">
+    <!-- 面包屑 -->
     <div class="crumbs">
       <el-breadcrumb separator="/">
         <el-breadcrumb-item><i class="el-icon-edit"></i>{{$t('common.recordForTeacher.title')}}</el-breadcrumb-item>
       </el-breadcrumb>
     </div>
+
+    <!-- 做题表 -->
     <div class="codingRecordContainer">
       <el-checkbox v-model="done" style="margin-left:20px;">{{$t('common.recordForTeacher.onlyDone')}}</el-checkbox>
       <el-input :placeholder="$t('common.recordForTeacher.searchQuestion')" v-model="searchInput" class="searchInput">
         <el-button slot="append" icon="el-icon-search" @click="search"></el-button>
       </el-input>
       <el-table :data="tableData">
-        <el-table-column width="140%">
+        <el-table-column width="50">
           <template slot="header">
             <el-button type="text"
             @click="sortId()">{{$t('common.recordForTeacher.crId')}}<span class="el-icon-d-caret"></span></el-button>
@@ -20,9 +23,9 @@
             {{scope.row.id}}
           </template>
         </el-table-column>
-        <el-table-column prop="realName" :label="$t('common.recordForTeacher.realName')">
+        <el-table-column prop="realName" :label="$t('common.recordForTeacher.realName')" width="100">
         </el-table-column>
-        <el-table-column prop="topic" :label="$t('common.recordForTeacher.topic')">
+        <el-table-column prop="topic" :label="$t('common.recordForTeacher.topic')" width="300">
         </el-table-column>
         <el-table-column>
           <template slot="header">
@@ -61,11 +64,12 @@
         </el-table-column>
       </el-table>
       <el-pagination
+        v-if=" pageTotal/pageSize >= 1"
         :page-size="pageSize"
         layout="prev, pager, next"
-        :total="total"
+        :total="pageTotal"
         :current-page="currentPage"
-        @current-change="currentChange">
+        @current-change="handleCurrentChange">
       </el-pagination>
     </div>
     <!--<el-pagination
@@ -79,19 +83,19 @@
 </template>
 <script>
 export default{
+  name: 'recordForTeacher',
   data () {
     return {
       tableData: [],
-      totalTableData: [],
-      pageCount: 100,
+      codingRecords: [],
+      pageTotal: 0,
+      pageSize: 10,
       visible: false,
       code: '',
-      uId: '',
+      uId: sessionStorage.getItem('id'),
       done: false,
       record: [],
       searchInput: '',
-      total: 10,
-      pageSize: 10,
       currentPage: 1,
       sortType: 'id',
       sId: false,
@@ -101,65 +105,63 @@ export default{
     }
   },
   async created () {
-    this.uId = sessionStorage.getItem('id')
-    this.record = await this.getRecord()
-    let questionList = await this.getQuestion()
-    let stuInfos = await this.getStuInfo()
-    this.total = this.record.length
-    let map = new Map()
-    for (let question of questionList) {
-      map.set(question.id, question.topic)
-    }
-    for (let item of this.record) {
-      item.topic = map.get(item.cqId)
-    }
-    map = new Map()
-    for (let stuInfo of stuInfos) {
-      map.set(stuInfo.id, stuInfo.realName)
-    }
-    for (let item of this.record) {
-      item.realName = map.get(item.uId)
-      if (item.solveDate !== null) {
-        item.solveDate = new Date(item.solveDate).toLocaleString('chinese', { hour12: false })
-      } else {
-        item.solveDate = this.$t('common.recordForTeacher.notDone')
-      }
-    }
-    this.totalTableData = this.record.concat()
-    this.tableData = this.record.slice(0, this.pageSize).concat()
-  },
-  watch: {
-    done: function (val) {
-      this.tableData = []
-      this.totalTableData = []
-      if (val) {
-        for (let i in this.record) {
-          if (this.record[i].status === 'done' && this.record[i].topic.indexOf(this.searchInput) > -1) {
-            this.totalTableData.push(this.record[i])
-          }
-        }
-      } else {
-        for (let i in this.record) {
-          if (this.record[i].topic.indexOf(this.searchInput) > -1) {
-            this.totalTableData.push(this.record[i])
-          }
-        }
-      }
-      switch (this.sortType) {
-        case 'id': this.sortId()
-          break
-        case 'mem': this.sortMem()
-          break
-        case 'time': this.sortTime()
-          break
-        case 'date': this.sortDate()
-          break
-      }
-      this.total = this.totalTableData.length
-      this.tableData = this.totalTableData.slice(0, this.pageSize).concat()
-    }
+    this.getData(0, this.pageSize)
   },
   methods: {
+    async getData (offset, limit) {
+      this.pageTotal = await this.getListLength()
+      // 默认显示从首页开始的10个条目
+      // 获取对应的 quetions 数据
+      if (this.pageTotal !== 0) {
+        this.codingRecords = await this.getRecords(offset, limit)
+        this.codingQuestions = await this.getQuestionById()
+        this.stuInfos = await this.getStuInfoById()
+
+        // console.log(this.codingRecords)
+        // console.log(this.codingQuestions)
+        console.log(this.stuInfos)
+        // let merged = []
+
+        this.codingRecords.forEach((record, index) => {
+          let student = this.stuInfos.filter(stu => {
+            return stu.id === record.uId
+          })
+          record.realName = student[0].realName
+        })
+        this.codingRecords.forEach((record, index) => {
+          let question = this.codingQuestions.filter(quest => {
+            return quest.id === record.cqId
+          })
+          record.topic = question[0].topic
+        })
+        console.log(this.codingRecords)
+        this.tableData = this.codingRecords
+      } else {
+        this.tableData = []
+      }
+    },
+    getListLength () {
+      return new Promise((resolve, reject) => {
+        this.$api.get('codingRecords/count', null, res => {
+          resolve(res)
+        }, res => {
+          resolve(0)
+        })
+      })
+    },
+    getRecords (offset, limit) {
+      return new Promise((resolve, reject) => {
+        let data = {
+          limit,
+          offset
+        }
+        data.where = JSON.stringify(data.where)
+        this.$api.get('codingRecords', data, res => {
+          // this.codingRecords = res
+          resolve(res)
+        }, res => { console.log('error:' + res) })
+      })
+    },
     checkCoding (row) {
       this.$alert('<PRE>' + row.code + '</PRE>', this.$t('common.recordForTeacher.checkCode'), {
         confirmButtonText: this.$t('common.recordForTeacher.ok'),
@@ -167,31 +169,37 @@ export default{
       })
     },
     handleCurrentChange (val) {
-      console.log(`当前页: ${val}`)
+      this.getData((val - 1) * this.pageSize, this.pageSize)
     },
-    getRecord () {
+    getQuestionById () {
       return new Promise((resolve, reject) => {
+        let idArr = this.codingRecords.map(item => {
+          return item.cqId
+        })
         let data = {
+          where: {
+            id: idArr
+          }
         }
-        this.$api.get('codingRecords', data, res => {
+        this.$api.get('codingQuestions', data, res => {
           resolve(res)
         }, res => {
           resolve(false)
         })
       })
     },
-    getQuestion () {
+    getStuInfoById () {
       return new Promise((resolve, reject) => {
-        this.$api.get('codingQuestions', null, res => {
-          resolve(res)
-        }, res => {
-          resolve(false)
+        let idArr = this.codingRecords.map(item => {
+          return item.uId
         })
-      })
-    },
-    getStuInfo () {
-      return new Promise((resolve, reject) => {
-        this.$api.get('stuInfos', null, res => {
+        console.log(idArr)
+        let data = {
+          where: {
+            id: idArr
+          }
+        }
+        this.$api.get('stuInfos', data, res => {
           resolve(res)
         }, res => {
           resolve(false)
@@ -325,6 +333,37 @@ export default{
         this.sDate = true
       }
       this.tableData = this.totalTableData.slice((this.currentPage - 1) * 10, (this.currentPage - 1) * 10 + 10).concat()
+    }
+  },
+  watch: {
+    done: function (val) {
+      this.tableData = []
+      this.totalTableData = []
+      if (val) {
+        for (let i in this.record) {
+          if (this.record[i].status === 'done' && this.record[i].topic.indexOf(this.searchInput) > -1) {
+            this.totalTableData.push(this.record[i])
+          }
+        }
+      } else {
+        for (let i in this.record) {
+          if (this.record[i].topic.indexOf(this.searchInput) > -1) {
+            this.totalTableData.push(this.record[i])
+          }
+        }
+      }
+      switch (this.sortType) {
+        case 'id': this.sortId()
+          break
+        case 'mem': this.sortMem()
+          break
+        case 'time': this.sortTime()
+          break
+        case 'date': this.sortDate()
+          break
+      }
+      this.total = this.totalTableData.length
+      this.tableData = this.totalTableData.slice(0, this.pageSize).concat()
     }
   }
 }
