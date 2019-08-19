@@ -69,7 +69,6 @@ export default{
   methods: {
     async getData () {
       this.pageTotal = await this.getListLength()
-      console.log(this.pageTotal)
       // 默认显示从首页开始的10个条目
       // 获取对应的 quetions 数据
       if (this.pageTotal !== 0) {

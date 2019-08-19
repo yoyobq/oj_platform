@@ -9,76 +9,66 @@
 
     <!-- 做题表 -->
     <div class="codingRecordContainer">
-      <el-checkbox v-model="done" style="margin-left:20px;">{{$t('common.recordForTeacher.onlyDone')}}</el-checkbox>
-      <el-input :placeholder="$t('common.recordForTeacher.searchQuestion')" v-model="searchInput" class="searchInput">
-        <el-button slot="append" icon="el-icon-search" @click="search"></el-button>
+      <!-- <el-checkbox v-model="done" style="margin-left:20px;">{{$t('common.recordForTeacher.onlyDone')}}</el-checkbox> -->
+      <el-input :placeholder="$t('common.recordForTeacher.searchQuestion')" v-model="searchInput" class="search-bar input-with-select">
+        <el-select v-model="selectType" slot="prepend" class="search-type">
+          <el-option label="Name" value="1"></el-option>
+          <el-option label="Topic" value="2"></el-option>
+        </el-select>
+        <el-button slot="append" icon="el-icon-search"  @click="search"></el-button>
       </el-input>
+      <div>
+        <el-tag
+          class="tag-bar"
+          v-if="nameTag !== null"
+          closable
+          type="success"
+          @close='deleteNameTag'>
+          {{nameTag}}
+        </el-tag>
+        <el-tag
+          class="tag-bar"
+          v-if="topicTag !== null"
+          closable
+          @close='deleteTopicTag'>
+          {{topicTag}}
+        </el-tag>
+      </div>
       <el-table :data="tableData">
-        <el-table-column width="50">
-          <template slot="header">
-            <el-button type="text"
-            @click="sortId()">{{$t('common.recordForTeacher.crId')}}<span class="el-icon-d-caret"></span></el-button>
-          </template>
+        <el-table-column prop="id" :label="$t('common.recordForTeacher.crId')" width="70" sortable></el-table-column>
+        <el-table-column prop="realName" :label="$t('common.recordForTeacher.realName')" width="100"></el-table-column>
+        <el-table-column prop="topic" :label="$t('common.recordForTeacher.topic')" width="300"></el-table-column>
+        <!-- 内存使用 -->
+        <el-table-column prop="memUsage" :label="$t('common.recordForTeacher.mem')" width="80"></el-table-column>
+        <!-- 时间使用 -->
+        <el-table-column prop="timeUsage" :label="$t('common.recordForTeacher.time')" width="80"></el-table-column>
+        <!-- 解决日期 -->
+        <el-table-column :label="$t('common.recordForTeacher.date')" width="100" :formatter="formatDate"></el-table-column>
+        <!-- 解题状态 -->
+        <el-table-column prop="status" :label="$t('common.recordForTeacher.status')" align="center" width="100" sortable>
           <template slot-scope="scope">
-            {{scope.row.id}}
+            <el-tag v-if="scope.row.status === 'done'" type="success">Solved</el-tag>
+            <el-tag v-if="scope.row.status === 'unsolved'" type="warning">Unsolved</el-tag>
+            <el-tag v-if="scope.row.status === 'timeout'" type="danger">Timeout</el-tag>
+            <el-tag v-if="scope.row.status === 'ignore'" type="danger">Ignore</el-tag>
           </template>
         </el-table-column>
-        <el-table-column prop="realName" :label="$t('common.recordForTeacher.realName')" width="100">
-        </el-table-column>
-        <el-table-column prop="topic" :label="$t('common.recordForTeacher.topic')" width="300">
-        </el-table-column>
-        <el-table-column>
-          <template slot="header">
-            <el-button type="text"
-            @click="sortMem()">{{$t('common.recordForTeacher.mem')}}<span class="el-icon-d-caret"></span></el-button>
-          </template>
-          <template slot-scope="scope">
-            {{scope.row.memUsage}}kb
-          </template>
-        </el-table-column>
-        <el-table-column>
-          <template slot="header">
-            <el-button type="text"
-            @click="sortTime()">{{$t('common.recordForTeacher.time')}}<span class="el-icon-d-caret"></span></el-button>
-          </template>
-          <template slot-scope="scope">
-            {{scope.row.timeUsage}}ms
-          </template>
-        </el-table-column>
-        <el-table-column>
-          <template slot="header">
-            <el-button type="text"
-            @click="sortDate()">{{$t('common.recordForTeacher.date')}}<span class="el-icon-d-caret"></span></el-button>
-          </template>
-          <template slot-scope="scope">
-            {{scope.row.solveDate}}
-          </template>
-        </el-table-column>
-        <el-table-column prop="status" :label="$t('common.recordForTeacher.status')">
-        </el-table-column>
+        <!-- <el-table-column prop="status" :label="$t('common.recordForTeacher.status')"></el-table-column> -->
+        <!-- 操作按钮 -->
         <el-table-column :label="$t('common.recordForTeacher.operate')">
           <template slot-scope="scope">
-            <el-button size="mini"
-            @click="checkCoding(scope.row)">{{$t('common.recordForTeacher.checkCode')}}</el-button>
+            <el-button size="mini" @click="checkCoding(scope.row)">{{$t('common.recordForTeacher.checkCode')}}</el-button>
           </template>
         </el-table-column>
       </el-table>
       <el-pagination
-        v-if=" pageTotal/pageSize >= 1"
+        hide-on-single-page
         :page-size="pageSize"
         layout="prev, pager, next"
         :total="pageTotal"
-        :current-page="currentPage"
         @current-change="handleCurrentChange">
       </el-pagination>
     </div>
-    <!--<el-pagination
-      background
-      @current-change="handleCurrentChange"
-      layout="prev, pager, next"
-      :page-size="10"
-      :total="pageCount">
-    </el-pagination>-->
   </div>
 </template>
 <script>
@@ -95,13 +85,16 @@ export default{
       uId: sessionStorage.getItem('id'),
       done: false,
       record: [],
+      selectType: '1',
       searchInput: '',
-      currentPage: 1,
-      sortType: 'id',
-      sId: false,
-      sMem: false,
-      sTime: false,
-      sDate: false
+      searchCondition: {},
+      nameTag: null,
+      topicTag: null
+      // rules: {
+      //   searchInput: [
+      //     { required: true, message: this.$t('message.loginPage.inputName'), trigger: 'blur' }
+      //   ]
+      // }
     }
   },
   async created () {
@@ -117,11 +110,6 @@ export default{
         this.codingQuestions = await this.getQuestionById()
         this.stuInfos = await this.getStuInfoById()
 
-        // console.log(this.codingRecords)
-        // console.log(this.codingQuestions)
-        console.log(this.stuInfos)
-        // let merged = []
-
         this.codingRecords.forEach((record, index) => {
           let student = this.stuInfos.filter(stu => {
             return stu.id === record.uId
@@ -134,7 +122,7 @@ export default{
           })
           record.topic = question[0].topic
         })
-        console.log(this.codingRecords)
+        // console.log(this.codingRecords)
         this.tableData = this.codingRecords
       } else {
         this.tableData = []
@@ -142,7 +130,11 @@ export default{
     },
     getListLength () {
       return new Promise((resolve, reject) => {
-        this.$api.get('codingRecords/count', null, res => {
+        let data = {
+          where: this.searchCondition
+        }
+        data.where = JSON.stringify(data.where)
+        this.$api.get('codingRecords/count', data, res => {
           resolve(res)
         }, res => {
           resolve(0)
@@ -153,7 +145,8 @@ export default{
       return new Promise((resolve, reject) => {
         let data = {
           limit,
-          offset
+          offset,
+          where: this.searchCondition
         }
         data.where = JSON.stringify(data.where)
         this.$api.get('codingRecords', data, res => {
@@ -167,9 +160,6 @@ export default{
         confirmButtonText: this.$t('common.recordForTeacher.ok'),
         dangerouslyUseHTMLString: true
       })
-    },
-    handleCurrentChange (val) {
-      this.getData((val - 1) * this.pageSize, this.pageSize)
     },
     getQuestionById () {
       return new Promise((resolve, reject) => {
@@ -193,7 +183,7 @@ export default{
         let idArr = this.codingRecords.map(item => {
           return item.uId
         })
-        console.log(idArr)
+        // console.log(idArr)
         let data = {
           where: {
             id: idArr
@@ -206,179 +196,126 @@ export default{
         })
       })
     },
-    search () {
-      this.tableData = []
-      this.totalTableData = []
-      for (let i in this.record) {
-        if (this.record[i].topic.indexOf(this.searchInput) > -1) {
-          if (this.record[i].status === 'done' || this.done === false) {
-            this.totalTableData.push(this.record[i])
-          }
-        }
-      }
-      this.total = this.totalTableData.length
-      this.tableData = this.totalTableData.slice(0, this.pageSize).concat()
+    handleCurrentChange (val) {
+      this.getData((val - 1) * this.pageSize, this.pageSize)
     },
-    currentChange (val) {
-      this.tableData = this.totalTableData.slice((val - 1) * 10, (val - 1) * 10 + 10).concat()
+    deleteNameTag (ev) {
+      this.nameTag = null
+      delete this.searchCondition.uId
+      this.getData(0, this.pageSize)
     },
-    sortId () {
-      this.sortType = 'id'
-      let copy = []
-      if (this.sId) {
-        for (let i = 0; i < this.totalTableData.length - 1; i++) {
-          for (let j = i + 1; j < this.totalTableData.length; j++) {
-            if (this.totalTableData[i].id > this.totalTableData[j].id) {
-              copy = JSON.parse(JSON.stringify(this.totalTableData[i]))
-              this.totalTableData[i] = JSON.parse(JSON.stringify(this.totalTableData[j]))
-              this.totalTableData[j] = JSON.parse(JSON.stringify(copy))
-            }
-          }
-        }
-        this.sId = false
-      } else {
-        for (let i = 0; i < this.totalTableData.length - 1; i++) {
-          for (let j = i + 1; j < this.totalTableData.length; j++) {
-            if (this.totalTableData[i].id < this.totalTableData[j].id) {
-              copy = JSON.parse(JSON.stringify(this.totalTableData[i]))
-              this.totalTableData[i] = JSON.parse(JSON.stringify(this.totalTableData[j]))
-              this.totalTableData[j] = JSON.parse(JSON.stringify(copy))
-            }
-          }
-        }
-        this.sId = true
-      }
-      this.tableData = this.totalTableData.slice((this.currentPage - 1) * 10, (this.currentPage - 1) * 10 + 10).concat()
+    deleteTopicTag (ev) {
+      this.topicTag = null
+      delete this.searchCondition.cqId
+      this.getData(0, this.pageSize)
     },
-    sortMem () {
-      this.sortType = 'mem'
-      let copy = []
-      if (this.sMem) {
-        for (let i = 0; i < this.totalTableData.length - 1; i++) {
-          for (let j = i + 1; j < this.totalTableData.length; j++) {
-            if (this.totalTableData[i].memUsage < this.totalTableData[j].memUsage) {
-              copy = JSON.parse(JSON.stringify(this.totalTableData[i]))
-              this.totalTableData[i] = JSON.parse(JSON.stringify(this.totalTableData[j]))
-              this.totalTableData[j] = JSON.parse(JSON.stringify(copy))
-            }
-          }
-        }
-        this.sMem = false
+    formatDate (row) {
+      if (row.status === 'done') {
+        return this.$moment(Date.parse(row.solveDate)).format('MM-DD HH:MM')
       } else {
-        for (let i = 0; i < this.totalTableData.length - 1; i++) {
-          for (let j = i + 1; j < this.totalTableData.length; j++) {
-            if (this.totalTableData[i].memUsage > this.totalTableData[j].memUsage) {
-              copy = JSON.parse(JSON.stringify(this.totalTableData[i]))
-              this.totalTableData[i] = JSON.parse(JSON.stringify(this.totalTableData[j]))
-              this.totalTableData[j] = JSON.parse(JSON.stringify(copy))
-            }
-          }
-        }
-        this.sMem = true
+        return 'Unsolved'
       }
-      this.tableData = this.totalTableData.slice((this.currentPage - 1) * 10, (this.currentPage - 1) * 10 + 10).concat()
     },
-    sortTime () {
-      this.sortType = 'time'
-      let copy = []
-      if (this.sTime) {
-        for (let i = 0; i < this.totalTableData.length - 1; i++) {
-          for (let j = i + 1; j < this.totalTableData.length; j++) {
-            if (this.totalTableData[i].timeUsage > this.totalTableData[j].timeUsage) {
-              copy = JSON.parse(JSON.stringify(this.totalTableData[i]))
-              this.totalTableData[i] = JSON.parse(JSON.stringify(this.totalTableData[j]))
-              this.totalTableData[j] = JSON.parse(JSON.stringify(copy))
-            }
+    searchIdByName (name) {
+      return new Promise((resolve, reject) => {
+        let data = {
+          where: {
+            realName: name
           }
         }
-        this.sTime = false
-      } else {
-        for (let i = 0; i < this.totalTableData.length - 1; i++) {
-          for (let j = i + 1; j < this.totalTableData.length; j++) {
-            if (this.totalTableData[i].timeUsage < this.totalTableData[j].timeUsage) {
-              copy = JSON.parse(JSON.stringify(this.totalTableData[i]))
-              this.totalTableData[i] = JSON.parse(JSON.stringify(this.totalTableData[j]))
-              this.totalTableData[j] = JSON.parse(JSON.stringify(copy))
-            }
-          }
-        }
-        this.sTime = true
-      }
-      this.tableData = this.totalTableData.slice((this.currentPage - 1) * 10, (this.currentPage - 1) * 10 + 10).concat()
+        data.where = JSON.stringify(data.where)
+        this.$api.get('stuInfos', data, res => {
+          resolve(res)
+        }, res => {
+          console.log(res)
+          resolve(null)
+        })
+      })
     },
-    sortDate () {
-      this.sortType = 'date'
-      let copy = []
-      if (this.sDate) {
-        for (let i = 0; i < this.totalTableData.length - 1; i++) {
-          for (let j = i + 1; j < this.totalTableData.length; j++) {
-            if ((this.totalTableData[i].solveDate < this.totalTableData[j].solveDate && this.totalTableData[j].solveDate !== 'not done') || (this.totalTableData[i].solveDate === 'not done' && this.totalTableData[j] !== 'not done')) {
-              copy = JSON.parse(JSON.stringify(this.totalTableData[i]))
-              this.totalTableData[i] = JSON.parse(JSON.stringify(this.totalTableData[j]))
-              this.totalTableData[j] = JSON.parse(JSON.stringify(copy))
-            }
+    searchIdByTopic (topic) {
+      return new Promise((resolve, reject) => {
+        let data = {
+          where: {
+            topic: topic
           }
         }
-        this.sDate = false
+        data.where = JSON.stringify(data.where)
+        this.$api.get('codingQuestions', data, res => {
+          resolve(res)
+        }, res => {
+          console.log(res)
+          resolve(null)
+        })
+      })
+    },
+    async search () {
+      // console.log('hi')
+      if (this.searchInput) {
+        if (this.selectType === '1') {
+          let users = await this.searchIdByName(this.searchInput)
+          if (users) {
+            let result = users.map(item => {
+              return item.id
+            })
+            this.searchCondition.uId = result
+            this.nameTag = this.searchInput
+          } else {
+            this.$message({
+              message: 'No data.',
+              type: 'warning'
+            })
+          }
+        }
+
+        if (this.selectType === '2') {
+          let questions = await this.searchIdByTopic(this.searchInput)
+          if (questions) {
+            let result = questions.map(item => {
+              return item.id
+            })
+            this.searchCondition.cqId = result
+            this.topicTag = this.searchInput
+          } else {
+            this.$message({
+              message: 'No data.',
+              type: 'warning'
+            })
+          }
+        }
+        this.getData(0, this.pageSize)
       } else {
-        for (let i = 0; i < this.totalTableData.length - 1; i++) {
-          for (let j = i + 1; j < this.totalTableData.length; j++) {
-            if ((this.totalTableData[i].solveDate > this.totalTableData[j].solveDate && this.totalTableData[j].solveDate !== 'not done') || (this.totalTableData[i].solveDate === 'not done' && this.totalTableData[j] !== 'not done')) {
-              copy = JSON.parse(JSON.stringify(this.totalTableData[i]))
-              this.totalTableData[i] = JSON.parse(JSON.stringify(this.totalTableData[j]))
-              this.totalTableData[j] = JSON.parse(JSON.stringify(copy))
-            }
-          }
-        }
-        this.sDate = true
+        this.$message({
+          message: 'The KEYWORD cannot be empty.',
+          type: 'warning'
+        })
       }
-      this.tableData = this.totalTableData.slice((this.currentPage - 1) * 10, (this.currentPage - 1) * 10 + 10).concat()
-    }
-  },
-  watch: {
-    done: function (val) {
-      this.tableData = []
-      this.totalTableData = []
-      if (val) {
-        for (let i in this.record) {
-          if (this.record[i].status === 'done' && this.record[i].topic.indexOf(this.searchInput) > -1) {
-            this.totalTableData.push(this.record[i])
-          }
-        }
-      } else {
-        for (let i in this.record) {
-          if (this.record[i].topic.indexOf(this.searchInput) > -1) {
-            this.totalTableData.push(this.record[i])
-          }
-        }
-      }
-      switch (this.sortType) {
-        case 'id': this.sortId()
-          break
-        case 'mem': this.sortMem()
-          break
-        case 'time': this.sortTime()
-          break
-        case 'date': this.sortDate()
-          break
-      }
-      this.total = this.totalTableData.length
-      this.tableData = this.totalTableData.slice(0, this.pageSize).concat()
     }
   }
 }
 </script>
 <style scoped>
 .codingRecordContainer {
-  width: 80%;
+  width: 960px;
   padding: 30px;
   background: #fff;
   border: 1px solid #ddd;
   border-radius: 5px
 }
-.searchInput{
-  width:30%;
-  float: right;
-  margin-right: 10px;
+.search-bar{
+  width: 500px;
+  margin-bottom: 10px;
 }
+
+.search-type {
+  width: 100px;
+}
+
+.tag-bar {
+  margin-right: 10px;
+  margin-bottom: 10px;
+}
+
+/* el-select el-select--small {
+  width: 100px;
+} */
 </style>

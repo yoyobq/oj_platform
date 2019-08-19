@@ -159,7 +159,7 @@
     },
     "recordForTeacher": {
       "onlyDone": "Only show done record",
-      "searchQuestion": "Search topics by keyword",
+      "searchQuestion": "Search by keyword",
       "title": "Check Stu Code",
       "crId": "ID",
       "realName": "Name",
