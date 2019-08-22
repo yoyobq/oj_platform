@@ -87,7 +87,9 @@ export default{
       record: [],
       selectType: '1',
       searchInput: '',
-      searchCondition: {},
+      searchCondition: {
+        status: ['done', 'unsolved', 'timeout']
+      },
       nameTag: null,
       topicTag: null
       // rules: {

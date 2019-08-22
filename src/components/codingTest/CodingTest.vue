@@ -1,6 +1,6 @@
 <template>
     <div class="code-area">
-      <div class="crumbs">
+      <!-- <div class="crumbs">
       <el-breadcrumb separator="/">
         <el-breadcrumb-item><i class="el-icon-edit"></i>{{$t('common.codingQuestion.title')}}</el-breadcrumb-item>
         <el-breadcrumb-item>{{$t('common.codingTest.title')}}</el-breadcrumb-item>
@@ -13,7 +13,7 @@
       </el-col>
       <el-col class="middlePart">
         <vcode :editorOption="editorOption" :preCode="preCode" :programLang="programLang" ref="myCode"></vcode>
-        <!--<el-button @click="cancel">Cancel</el-button>-->
+        <el-button @click="cancel">Cancel</el-button>
         <el-button type="primary" @click="run">{{$t('common.codingTest.sub&run')}}</el-button>
         <el-button type="success" @click="save">{{$t('common.codingTest.save')}}</el-button>
       </el-col>
@@ -22,11 +22,12 @@
         <error :errMsg="errMsg"></error>
         <result :correctRate="correctRate" :realTime="realTime" :realMem="realMem"></result>
       </el-col>
-      </el-row>
+      </el-row> -->
     </div>
 </template>
 
 <script>
+import bus from '../common/bus'
 import { codemirror } from 'vue-codemirror-lite'
 /* import code from './components/Code'
 import error from './components/Error'
@@ -53,10 +54,10 @@ export default {
   },
   data () {
     return {
-      cqId: '',
-      topic: '',
-      describe: '',
-      hint: '',
+      uId: sessionStorage.getItem('id'),
+      cqId: 0,
+      crId: '',
+      question: {},
       editorOption: {
         // value 可以是字符串，也可以是文档对象，
         // 实际编码的时候可以试试文档对象，简化文件操作,
@@ -73,7 +74,6 @@ export default {
         extraKeys: {'Ctrl-.': 'autocomplete'}
       },
       preCode: '',
-      crId: '',
       submitCount: 0,
       timeLimit: null,
       memLimit: null,
@@ -87,7 +87,145 @@ export default {
       programLang: 'Javascript'
     }
   },
+  created () {
+    console.log('created')
+    // this.cqId = this.$route.query.id
+    // this.$api.get('codingQuestions/' + this.cqId, null, res => {
+    //   console.log(res)
+    //   this.topic = res.topic
+    //   this.describe = res.describe
+    //   this.hint = res.hint
+    //   this.preCode = res.preCode
+    //   if (res.timeLimit === 0) {
+    //     this.timeLimit = this.$t('common.codingTest.unLimited')
+    //   } else {
+    //     this.timeLimit = res.timeLimit + 'ms'
+    //   }
+    //   if (res.memLimit === 0) {
+    //     this.memLimit = this.$t('common.codingTest.unLimited')
+    //   } else {
+    //     this.memLimit = res.memLimit + 'kb'
+    //   }
+    // }, res => {})
+    // const startDate = this.$moment(new Date()).format('YYYY-MM-DD HH:mm:ss')
+    // let data = {
+    //   '_csrf': this.$cookies.get('csrfToken'),
+    //   'data': {
+    //     uId: sessionStorage.getItem('id'),
+    //     cqId: this.cqId,
+    //     startDate
+    //   }
+    // }
+    // this.$api.post('codingRecords', data, res => {
+    //   this.crId = res
+    //   this.startDate = new Date(startDate).toLocaleString()
+    // }, res => {
+    //   let data = {
+    //     uId: sessionStorage.getItem('id'),
+    //     cqId: this.cqId
+    //   }
+    //   this.$api.get('codingRecords', data, res => {
+    //     let index = ''
+    //     for (let i in res) {
+    //       if (res[i].status === 'unsolved') {
+    //         this.crId = res[i].id
+    //         this.startDate = new Date(res[i].startDate).toLocaleString()
+    //         if (res[i].code !== null) {
+    //           this.preCode = res[i].code
+    //         }
+    //         break
+    //       } else if (res[i].status === 'done') {
+    //         index = i
+    //       }
+    //     }
+    //     if (this.crId === '') {
+    //       this.$confirm(this.$t('message.codingTest.addNewRecord'), this.$t('message.codingTest.message'), {
+    //         confirmButtonText: this.$t('common.codingTest.ok'),
+    //         cancelButtonText: this.$t('common.codingTest.cancel')
+    //       }).then(() => {
+    //         let data = {
+    //           '_csrf': this.$cookies.get('csrfToken'),
+    //           'data': {
+    //             status: 'ignore'
+    //           }
+    //         }
+    //         // console.log(this.editor.doc.getValue())
+    //         // console.log(data)
+    //         this.$api.put('codingRecords/' + res[index].id, data, res => {
+    //         }, res => {
+    //         })
+    //         const startDate = this.$moment(new Date()).format('YYYY-MM-DD HH:mm:ss')
+    //         data = {
+    //           '_csrf': this.$cookies.get('csrfToken'),
+    //           'data': {
+    //             uId: sessionStorage.getItem('id'),
+    //             cqId: this.cqId,
+    //             startDate
+    //           }
+    //         }
+    //         this.$api.post('codingRecords', data, res => {
+    //           this.crId = res
+    //           this.startDate = new Date(startDate).toLocaleString()
+    //         }, res => {})
+    //       }).catch(() => {
+    //         this.$router.go(-1)
+    //       })
+    //     }
+    //   }, res => {})
+    // })
+  },
+  beforeCreate () {
+    bus.$on('cqId', cqId => {
+      console.log('on')
+      this.cqId = cqId
+      // sessionStorage.setItem('cqId', cqId)
+    })
+  },
+  beforeDestroy () {
+    bus.$off()
+  },
+  async mounted () {
+    try {
+      console.log('mounted')
+      setTimeout(() => {
+        console.log('mounted timeout')
+        console.log(this.cqId)
+        // bus.$emit('cqId', event.id)
+        // console.log(this)
+      }, 1000)
+    } catch (error) {
+      this.$router.go(-1)
+    }
+    // this.$nextTick(async () => {
+    //   this.cqId = await self.getCqId()
+    //   console.log('next2')
+    //   console.log(this.cqId)
+    // })
+
+    // this.question = await this.getQuestData()
+    // console.log(this.question)
+  },
   methods: {
+    getCqId () {
+      return new Promise((resolve, reject) => {
+        console.log(this.cqId)
+        // 如果没有获得传递过来的 cqId，那么去sessionStorage中拿
+        if (!this.cqId && sessionStorage.getItem('cqId')) {
+          let cqId = sessionStorage.getItem('cqId')
+          resolve(cqId)
+        }
+        reject(new Error(0))
+      })
+    },
+    getQuestData () {
+      return new Promise((resolve, reject) => {
+        this.$api.get('codingQuestions/' + this.cqId, null, res => {
+          resolve(res)
+        }, res => {
+          reject(new Error(res))
+        })
+      })
+    },
     async save () {
       await this.saveCodingRecord()
       await this.createFile()
@@ -213,94 +351,6 @@ export default {
   computed: {
   },
   watch: {
-  },
-  mounted () {
-    // console.log('this is current editor object', this.editor)
-  },
-  created () {
-    this.cqId = this.$route.query.id
-    this.$api.get('codingQuestions/' + this.cqId, null, res => {
-      this.topic = res.topic
-      this.describe = res.describe
-      this.hint = res.hint
-      this.preCode = res.preCode
-      if (res.timeLimit === 0) {
-        this.timeLimit = this.$t('common.codingTest.unLimited')
-      } else {
-        this.timeLimit = res.timeLimit + 'ms'
-      }
-      if (res.memLimit === 0) {
-        this.memLimit = this.$t('common.codingTest.unLimited')
-      } else {
-        this.memLimit = res.memLimit + 'kb'
-      }
-    }, res => {})
-    const startDate = this.$moment(new Date()).format('YYYY-MM-DD HH:mm:ss')
-    let data = {
-      '_csrf': this.$cookies.get('csrfToken'),
-      'data': {
-        uId: sessionStorage.getItem('id'),
-        cqId: this.cqId,
-        startDate
-      }
-    }
-    this.$api.post('codingRecords', data, res => {
-      this.crId = res
-      this.startDate = new Date(startDate).toLocaleString()
-    }, res => {
-      let data = {
-        uId: sessionStorage.getItem('id'),
-        cqId: this.cqId
-      }
-      this.$api.get('codingRecords', data, res => {
-        let index = ''
-        for (let i in res) {
-          if (res[i].status === 'unsolved') {
-            this.crId = res[i].id
-            this.startDate = new Date(res[i].startDate).toLocaleString()
-            if (res[i].code !== null) {
-              this.preCode = res[i].code
-            }
-            break
-          } else if (res[i].status === 'done') {
-            index = i
-          }
-        }
-        if (this.crId === '') {
-          this.$confirm(this.$t('message.codingTest.addNewRecord'), this.$t('message.codingTest.message'), {
-            confirmButtonText: this.$t('common.codingTest.ok'),
-            cancelButtonText: this.$t('common.codingTest.cancel')
-          }).then(() => {
-            let data = {
-              '_csrf': this.$cookies.get('csrfToken'),
-              'data': {
-                status: 'ignore'
-              }
-            }
-            // console.log(this.editor.doc.getValue())
-            // console.log(data)
-            this.$api.put('codingRecords/' + res[index].id, data, res => {
-            }, res => {
-            })
-            const startDate = this.$moment(new Date()).format('YYYY-MM-DD HH:mm:ss')
-            data = {
-              '_csrf': this.$cookies.get('csrfToken'),
-              'data': {
-                uId: sessionStorage.getItem('id'),
-                cqId: this.cqId,
-                startDate
-              }
-            }
-            this.$api.post('codingRecords', data, res => {
-              this.crId = res
-              this.startDate = new Date(startDate).toLocaleString()
-            }, res => {})
-          }).catch(() => {
-            this.$router.go(-1)
-          })
-        }
-      }, res => {})
-    })
   }
 }
 </script>

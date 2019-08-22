@@ -34,7 +34,7 @@
       <el-table :data="tableData" class="quest-list" border empty-text="No Coding Questions"
                 @row-click="selectQuestion" header-cell-class-name="quest-list-header"
                 :default-sort = "{prop: 'status', order: 'descending'}">
-        <el-table-column prop="id" :label="$t('common.codingQuestion.id')" width="50" align="center"></el-table-column>
+        <!-- <el-table-column prop="id" :label="$t('common.codingQuestion.id')" width="50" align="center"></el-table-column> -->
         <el-table-column prop="status" label="status" align="center" width="100" sortable>
           <template slot-scope="scope">
             <el-tag v-if="scope.row.status === 'done'" type="success">Solved</el-tag>
@@ -45,7 +45,7 @@
         </el-table-column>
         <el-table-column prop="topic" :label="$t('common.codingQuestion.topic')" header-align="center" >
           <template slot-scope="scope">
-            <el-link :underline="false" type="success" @click="selectQuestion(scope.row.id)">{{ scope.row.topic }}</el-link>
+            <el-link :underline="false" type="success">{{ scope.row.topic }}</el-link>
           </template>
         </el-table-column>
         <el-table-column label="Subm times" prop="submitTimes" align="center" width="100"></el-table-column>
@@ -73,6 +73,7 @@
   </div>
 </template>
 <script>
+import bus from '../common/bus'
 export default{
   data () {
     return {
@@ -255,8 +256,9 @@ export default{
         this.tableData = result
       }
     },
-    selectQuestion (id) {
-      this.$router.push('/codingTest?id=' + id)
+    selectQuestion (event) {
+      bus.$emit('cqId', event.id)
+      this.$router.push('/codingTest')
     },
     handleCurrentChange (val) {
       this.getQuestions((val - 1) * this.pageSize, this.pageSize)

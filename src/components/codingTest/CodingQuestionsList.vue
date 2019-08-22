@@ -33,9 +33,9 @@
       <el-table :data="tableData" class="quest-list" border empty-text="No Coding Questions"
                 @row-click="selectQuestion" header-cell-class-name="quest-list-header">
         <el-table-column prop="id" :label="$t('common.codingQuestion.id')" width="50" align="center"></el-table-column>
-        <el-table-column prop="topic" :label="$t('common.codingQuestion.topic')" header-align="center" >
+        <el-table-column :label="$t('common.codingQuestion.topic')" header-align="center" >
           <template slot-scope="scope">
-            <el-link :underline="false" type="success" @click="selectQuestion(scope.row.id)">{{ scope.row.topic }}</el-link>
+            <el-link :underline="false" type="success" >{{ scope.row.topic }}</el-link>
           </template>
         </el-table-column>
         <el-table-column label="Accuracy" align="center" width="100" :formatter="formatAccuracy"></el-table-column>
@@ -62,6 +62,8 @@
   </div>
 </template>
 <script>
+import bus from '../common/bus'
+// import { setTimeout } from 'timers'
 export default{
   name: 'CodingQuestionsList',
   data () {
@@ -83,6 +85,10 @@ export default{
   },
   created () {
     this.getData()
+  },
+  beforeDestroy () {
+    console.log('before Dest')
+    // bus.$emit('cqId', event.id)
   },
   methods: {
     async getData () {
@@ -254,8 +260,14 @@ export default{
         this.tableData = result
       }
     },
-    selectQuestion (id) {
-      this.$router.push('/codingTest?id=' + id)
+    selectQuestion (event) {
+      console.log('selected')
+      this.$router.push('/codingTest')
+      setTimeout(() => {
+        console.log('timeout')
+        bus.$emit('cqId', event.id)
+      }, 500)
+      // bus.$emit('cqId', event.id)
     },
     handleCurrentChange (val) {
       this.getQuestions((val - 1) * this.pageSize, this.pageSize)
