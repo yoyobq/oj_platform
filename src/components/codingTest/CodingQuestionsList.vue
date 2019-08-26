@@ -85,10 +85,24 @@ export default{
   },
   created () {
     this.getData()
+    console.log('created')
   },
-  beforeDestroy () {
+  async beforeDestroy () {
     console.log('before Dest')
+    await this.$nextTick()
+    console.log('next1')
+    await this.$nextTick()
+    console.log('next2')
+    await this.$nextTick()
+    console.log('next3')
+    await this.$nextTick()
+    console.log('next4')
+    await this.$nextTick()
+    console.log('next5')
     // bus.$emit('cqId', event.id)
+  },
+  destroyed () {
+    console.log('destroyed')
   },
   methods: {
     async getData () {

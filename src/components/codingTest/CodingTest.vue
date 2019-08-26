@@ -187,6 +187,7 @@ export default {
   async mounted () {
     try {
       console.log('mounted')
+      console.log(this.cqId)
       setTimeout(() => {
         console.log('mounted timeout')
         console.log(this.cqId)
