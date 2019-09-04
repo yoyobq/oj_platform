@@ -1,6 +1,6 @@
 <template>
     <div class="code-area">
-      <!-- <div class="crumbs">
+      <div class="crumbs">
       <el-breadcrumb separator="/">
         <el-breadcrumb-item><i class="el-icon-edit"></i>{{$t('common.codingQuestion.title')}}</el-breadcrumb-item>
         <el-breadcrumb-item>{{$t('common.codingTest.title')}}</el-breadcrumb-item>
@@ -8,26 +8,25 @@
       </div>
       <el-row class="test-el-row">
       <el-col class="leftPart">
-        <vtitle :topic="topic" :describe="describe" :hint="hint"></vtitle>
+        <vtitle :topic="question.topic" :describe="question.describe" :hint="question.hint"></vtitle>
         <testcase :cqId="cqId"></testcase>
       </el-col>
       <el-col class="middlePart">
-        <vcode :editorOption="editorOption" :preCode="preCode" :programLang="programLang" ref="myCode"></vcode>
+        <vcode :editorOption="editorOption" :preCode="question.preCode" :programLang="programLang" ref="myCode"></vcode>
         <el-button @click="cancel">Cancel</el-button>
         <el-button type="primary" @click="run">{{$t('common.codingTest.sub&run')}}</el-button>
         <el-button type="success" @click="save">{{$t('common.codingTest.save')}}</el-button>
       </el-col>
       <el-col class="rightPart">
-        <info :submitCount="submitCount" :timeLimit="timeLimit" :memLimit="memLimit" :minTime="minTime" :minMem="minMem" :startDate="startDate"></info>
+        <info :submitCount="submitCount" :timeLimit="question.timeLimit" :memLimit="question.memLimit" :minTime="record.minTime" :minMem="record.minMem" :startDate="record.startDate"></info>
         <error :errMsg="errMsg"></error>
         <result :correctRate="correctRate" :realTime="realTime" :realMem="realMem"></result>
       </el-col>
-      </el-row> -->
+      </el-row>
     </div>
 </template>
 
 <script>
-import bus from '../common/bus'
 import { codemirror } from 'vue-codemirror-lite'
 /* import code from './components/Code'
 import error from './components/Error'
@@ -58,6 +57,7 @@ export default {
       cqId: 0,
       crId: '',
       question: {},
+      record: {},
       editorOption: {
         // value 可以是字符串，也可以是文档对象，
         // 实际编码的时候可以试试文档对象，简化文件操作,
@@ -88,7 +88,6 @@ export default {
     }
   },
   created () {
-    console.log('created')
     // this.cqId = this.$route.query.id
     // this.$api.get('codingQuestions/' + this.cqId, null, res => {
     //   console.log(res)
@@ -174,48 +173,34 @@ export default {
     //   }, res => {})
     // })
   },
-  beforeCreate () {
-    bus.$on('cqId', cqId => {
-      console.log('on')
-      this.cqId = cqId
-      // sessionStorage.setItem('cqId', cqId)
-    })
-  },
-  beforeDestroy () {
-    bus.$off()
-  },
   async mounted () {
     try {
-      console.log('mounted')
-      console.log(this.cqId)
-      setTimeout(() => {
-        console.log('mounted timeout')
-        console.log(this.cqId)
-        // bus.$emit('cqId', event.id)
-        // console.log(this)
-      }, 1000)
+      this.cqId = await this.getCqId()
+      sessionStorage.setItem('cqId', this.cqId)
+      this.question = await this.getQuestData()
+      let records = await this.getQuestRecords()
+      this.record = await this.filterRecord(records)
+      console.log(this.question)
+      console.log(this.record)
     } catch (error) {
+      console.log(error)
       this.$router.go(-1)
     }
-    // this.$nextTick(async () => {
-    //   this.cqId = await self.getCqId()
-    //   console.log('next2')
-    //   console.log(this.cqId)
-    // })
-
-    // this.question = await this.getQuestData()
-    // console.log(this.question)
   },
   methods: {
     getCqId () {
       return new Promise((resolve, reject) => {
-        console.log(this.cqId)
+        let cqId = this.$route.params.id
         // 如果没有获得传递过来的 cqId，那么去sessionStorage中拿
-        if (!this.cqId && sessionStorage.getItem('cqId')) {
-          let cqId = sessionStorage.getItem('cqId')
-          resolve(cqId)
+        if (!cqId && sessionStorage.getItem('cqId')) {
+          cqId = sessionStorage.getItem('cqId')
         }
-        reject(new Error(0))
+
+        if (cqId) {
+          resolve(cqId)
+        } else {
+          reject(new Error('can not get question id.'))
+        }
       })
     },
     getQuestData () {
@@ -225,6 +210,168 @@ export default {
         }, res => {
           reject(new Error(res))
         })
+      })
+    },
+    getQuestRecords () {
+      return new Promise((resolve, reject) => {
+        let data = {
+          where: {
+            cqId: this.cqId,
+            uId: this.uId,
+            status: ['unsolved', 'done', 'timeout']
+          }
+        }
+        data.where = JSON.stringify(data.where)
+        this.$api.get('codingRecords', data, res => {
+          resolve(res)
+        }, res => {
+          console.log(res)
+          reject(new Error(res))
+        })
+      })
+    },
+    filterRecord (records) {
+      return new Promise(async (resolve, reject) => {
+        if (records.length === 1) {
+          this.record = records[0]
+        } else {
+          throw new Error('Record Error')
+        }
+        switch (records[0].status) {
+          case 'unsolved':
+            if (await this.isTimeOut(records[0])) {
+              this.setQuestTimeout(records[0].id)
+            } else {
+              resolve(records[0])
+            }
+            break
+          case 'done':
+            this.startOverMsg('SOLVED')
+            break
+          case 'timeout':
+            this.startOverMsg('TIMED OUT')
+            break
+          default:
+            break
+        }
+      })
+    },
+    startOverMsg (msgStr) {
+      this.$confirm('This question has ' + msgStr + ', do you want to start over?', msgStr, {
+        confirmButtonText: 'ok',
+        cancelButtonText: 'cancel',
+        type: 'warning'
+      })
+        .then(() => {
+          this.startOver(this.record.id)
+          this.$message({
+            type: 'success',
+            message: 'success!'
+          })
+        }).catch(() => {
+          this.$message({
+            type: 'info',
+            message: 'Canceled'
+          })
+          this.$router.go(-1)
+        })
+    },
+    // 重做此题
+    async startOver (qrId) {
+      try {
+        await this.closeTheRecord(qrId)
+        await this.startNewRecord(qrId)
+        this.$router.go(0)
+      } catch (error) {
+        console.log(error)
+      }
+    },
+    setQuestTimeout (id) {
+      // console.log(id)
+      let data = {
+        '_csrf': this.$cookies.get('csrfToken'),
+        'data': {
+          status: 'timeout'
+        }
+      }
+      this.$api.put('codingRecords/' + id, data, res => {
+        this.startOverMsg('TIMED OUT')
+      }, res => {
+        throw new Error(res)
+      })
+    },
+    // 关闭原有做题记录
+    closeTheRecord (qrId) {
+      return new Promise((resolve, reject) => {
+        let data = {
+          '_csrf': this.$cookies.get('csrfToken'),
+          'data': {
+            status: 'ignore'
+          }
+        }
+        this.$api.put('codingRecords/' + qrId, data, res => {
+          resolve()
+        }, res => {
+          throw new Error(res)
+        })
+      })
+    },
+    // 建立新的做题记录
+    startNewRecord (qrId) {
+      return new Promise((resolve, reject) => {
+        // 这个操作不会经常发生，所以干脆做个数据安全的冗余检查（理论上不会出现这个问题）
+        // 先检查是否存在未关闭的题目
+        let data = {
+          where: {
+            cqId: this.cqId,
+            uId: this.uId,
+            status: ['unsolved', 'done', 'timeout']
+          }
+        }
+        data.where = JSON.stringify(data.where)
+        this.$api.get('codingRecords', data, res => {
+          // 如果还存在未关闭的题目，抛出错误，停止新建
+          throw new Error('已有多余记录，请联系管理员')
+        }, res => {
+          // 没有的话再建立一个新的做题记录
+          const startDate = this.$moment(new Date()).format('YYYY-MM-DD HH:mm:ss')
+          const expireTime = this.record.expireTime
+          data = {
+            '_csrf': this.$cookies.get('csrfToken'),
+            'data': {
+              uId: this.uId,
+              cqId: this.cqId,
+              startDate,
+              expireTime
+            }
+          }
+          this.$api.post('codingRecords', data, res => {
+            resolve()
+          }, res => {
+            throw new Error('Create record fail')
+          })
+        })
+      })
+    },
+    // 检查是否超时
+    isTimeOut (record) {
+      return new Promise((resolve, reject) => {
+        let expireTime = record.expireTime
+        // 如果未设定过期时间，就是无限期，不用计算
+        if (!expireTime) {
+          resolve(0)
+        } else {
+        // 如果有过期时间的设定，判断是否过期
+          let nowDate = this.$moment(Date.now()).valueOf()
+          let startDate = this.$moment(record.startDate).valueOf()
+          // console.log(record.startDate + 20 * 1000 * 60)
+          let passedTime = (nowDate - startDate) / 1000 / 60
+          if (record.expireTime >= passedTime) {
+            resolve(0)
+          } else {
+            resolve(1)
+          }
+        }
       })
     },
     async save () {

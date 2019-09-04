@@ -29,6 +29,7 @@ export default new Router({
         },
         {
           path: '/codingTest',
+          name: 'codingTest',
           component: resolve => require(['../components/codingTest/CodingTest.vue'], resolve),
           meta: { title: '编程测试' }
         },

@@ -62,8 +62,6 @@
   </div>
 </template>
 <script>
-import bus from '../common/bus'
-// import { setTimeout } from 'timers'
 export default{
   name: 'CodingQuestionsList',
   data () {
@@ -85,24 +83,6 @@ export default{
   },
   created () {
     this.getData()
-    console.log('created')
-  },
-  async beforeDestroy () {
-    console.log('before Dest')
-    await this.$nextTick()
-    console.log('next1')
-    await this.$nextTick()
-    console.log('next2')
-    await this.$nextTick()
-    console.log('next3')
-    await this.$nextTick()
-    console.log('next4')
-    await this.$nextTick()
-    console.log('next5')
-    // bus.$emit('cqId', event.id)
-  },
-  destroyed () {
-    console.log('destroyed')
   },
   methods: {
     async getData () {
@@ -275,13 +255,12 @@ export default{
       }
     },
     selectQuestion (event) {
-      console.log('selected')
-      this.$router.push('/codingTest')
-      setTimeout(() => {
-        console.log('timeout')
-        bus.$emit('cqId', event.id)
-      }, 500)
-      // bus.$emit('cqId', event.id)
+      this.$router.push({
+        name: 'codingTest',
+        params: {
+          id: event.id
+        }
+      })
     },
     handleCurrentChange (val) {
       this.getQuestions((val - 1) * this.pageSize, this.pageSize)
