@@ -169,7 +169,7 @@ export default {
       this.question.preCode = res.preCode
       this.question.mode = 'javascript'
       this.testProgramId = res.tpId
-      console.log(this.testProgramId)
+      // console.log(this.testProgramId)
 
       // 获取测试代码（是否必要？）
       let testProgramData = {
@@ -188,7 +188,9 @@ export default {
           this.testcases = res[0]
           this.testcases.mergedCases = []
           this.mergeTestCases(res[0].inputData, res[0].outputData)
-        }, res => {})
+        }, res => {
+          // 若不存在测试用例记录，则新建一个记录
+        })
       }, res => {})
     }, res => {})
   },

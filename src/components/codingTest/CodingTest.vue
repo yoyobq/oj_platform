@@ -12,7 +12,7 @@
         <testcase :cqId="cqId"></testcase>
       </el-col>
       <el-col class="middlePart">
-        <vcode :editorOption="editorOption" :preCode="question.preCode" :programLang="programLang" ref="myCode"></vcode>
+        <vcode :editorOption="editorOption" :preCode="record.code" :programLang="programLang" ref="myCode"></vcode>
         <el-button @click="cancel">Cancel</el-button>
         <el-button type="primary" @click="run">{{$t('common.codingTest.sub&run')}}</el-button>
         <el-button type="success" @click="save">{{$t('common.codingTest.save')}}</el-button>
@@ -55,7 +55,6 @@ export default {
     return {
       uId: sessionStorage.getItem('id'),
       cqId: 0,
-      crId: '',
       question: {},
       record: {},
       editorOption: {
@@ -179,7 +178,14 @@ export default {
       sessionStorage.setItem('cqId', this.cqId)
       this.question = await this.getQuestData()
       let records = await this.getQuestRecords()
-      this.record = await this.filterRecord(records)
+      console.log(records)
+      if (records !== undefined) {
+        this.record = await this.filterRecord(records)
+      } else {
+        await this.addNewCodingRecords()
+        records = await this.getQuestRecords()
+        this.record = records[0]
+      }
       console.log(this.question)
       console.log(this.record)
     } catch (error) {
@@ -222,11 +228,32 @@ export default {
           }
         }
         data.where = JSON.stringify(data.where)
+        // console.log(data)
+        // 从codingRecords中查询做题记录
         this.$api.get('codingRecords', data, res => {
+          // 若有
           resolve(res)
         }, res => {
-          console.log(res)
-          reject(new Error(res))
+          resolve()
+        })
+      })
+    },
+    addNewCodingRecords () {
+      return new Promise((resolve, reject) => {
+        let data = {
+          '_csrf': this.$cookies.get('csrfToken'),
+          'data': {
+            cqId: this.cqId,
+            uId: this.uId,
+            submitTimes: 0,
+            status: 'unsolved',
+            code: this.question.preCode
+          }
+        }
+        this.$api.post('codingRecords', data, res => {
+          resolve()
+        }, res => {
+          reject(new Error('can\'t create record'))
         })
       })
     },
@@ -375,12 +402,25 @@ export default {
       })
     },
     async save () {
-      await this.saveCodingRecord()
-      await this.createFile()
+      // 此处应该检查是否成功
+      if (await this.saveCodingRecord()) {
+        this.$message({
+          type: 'success',
+          message: 'submit successful!'
+        })
+      } else {
+        this.$message({
+          type: 'error',
+          message: 'sth. wrong!'
+        })
+      }
+      // await this.createFile()
     },
     async run () {
-      await this.saveCodingRecord()
-      await this.createFile()
+      if (await this.saveCodingRecord()) {
+        await this.createFile()
+      }
+
       this.submitCount++
       let data = {
         '_csrf': this.$cookies.get('csrfToken'),
@@ -443,17 +483,18 @@ export default {
     },
     saveCodingRecord () {
       return new Promise((resolve, reject) => {
-        const solveDate = this.$moment(new Date()).format('YYYY-MM-DD HH:mm:ss')
+        // const solveDate = this.$moment(new Date()).format('YYYY-MM-DD HH:mm:ss')
         let data = {
           '_csrf': this.$cookies.get('csrfToken'),
           'data': {
-            code: this.$refs.myCode.editor.doc.getValue(),
-            solveDate: solveDate
+            code: this.$refs.myCode.editor.doc.getValue()
+            // submitTimes: this.record.submitTimes + 1
+            // solveDate: solveDate
           }
         }
         // console.log(this.editor.doc.getValue())
         // console.log(data)
-        this.$api.put('codingRecords/' + this.crId, data, res => {
+        this.$api.put('codingRecords/' + this.record.id, data, res => {
           resolve(true)
         }, res => {
           resolve(false)
@@ -467,7 +508,7 @@ export default {
           'data': {
             type: 'judge', // 文件类型是判题文件
             cqId: this.cqId, // cordingQuestions中的
-            uId: sessionStorage.getItem('id') // 作题人，应该从登陆用户的session中获取，保证安全
+            uId: this.uId // 作题人，应该从登陆用户的session中获取，保证安全
           }
         }
         this.$api.post('createJsFile', data2, res => {

@@ -148,7 +148,19 @@ export default {
               'data': this.question
             }
             this.$api.post('codingQuestions', data, res => {
-              this.$router.push('/createdQuestions')
+              console.log(res)
+              let data = {
+                '_csrf': this.$cookies.get('csrfToken'),
+                'data': {
+                  cqId: res,
+                  programLang: this.question.programLang,
+                  inputData: '[]',
+                  outputData: '[]'
+                }
+              }
+              this.$api.post('testcases', data, res => {
+                this.$router.push('/createdQuestions')
+              }, res => {})
             }, res => {})
           }
         }
