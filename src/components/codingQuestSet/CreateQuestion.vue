@@ -10,7 +10,7 @@
       </el-breadcrumb>
     </div>
     <div class="container">
-      <el-form :model="question" :rules="rules" ref="question" label-width="200px" size="medium" >
+      <el-form :model="question" :rules="rules" ref="question" label-width="200px" size="medium" width="960">
         <el-form-item :label="$t('common.createQuestion.topic')" prop="topic">
           <el-input v-model="question.topic"></el-input>
         </el-form-item>

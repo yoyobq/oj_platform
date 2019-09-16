@@ -137,7 +137,9 @@
       "topic": "Topic",
       "programLang": "PL",
       "status": "Status",
-      "operate": "Operation"
+      "operate": "Operation",
+      "public": "Make public",
+      "private": "Make private"
     },
     "addTest": {
       "title": "Add Test Code",

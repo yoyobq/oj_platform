@@ -9,7 +9,7 @@
 
     <!-- 列表 -->
     <div class="createQuestionsContainer">
-      <el-table :data="tableData" style="width: 100%">
+      <el-table :data="tableData" width="960">
         <el-table-column prop="id" :label="$t('common.createdQuestions.id')" width="50">
         </el-table-column>
         <el-table-column prop="topic" :label="$t('common.createdQuestions.topic')" width="450">
@@ -32,10 +32,12 @@
             <el-tag v-if="scope.row.status === 'close'" type="danger">Closed</el-tag>
           </template>
         </el-table-column>
-        <el-table-column :label="$t('common.createdQuestions.operate')">
+        <el-table-column :label="$t('common.createdQuestions.operate')" width="350">
           <template slot-scope="scope">
             <el-button size="mini" @click="edit(scope.row.id)">{{$t('common.createdQuestions.edit')}}</el-button>
             <el-button type="primary" size="mini" @click="addTest(scope.row.id)">{{$t('common.createdQuestions.addTest')}}</el-button>
+            <el-button type="success" v-if="scope.row.status === 'public'" size="mini" @click="makePrivate(scope.row.id)">{{$t('common.createdQuestions.private')}}</el-button>
+            <el-button type="warning" v-if="scope.row.status === 'edit'" size="mini" @click="makePublic(scope.row.id)">{{$t('common.createdQuestions.public')}}</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -131,6 +133,30 @@ export default{
           id: id
         }
       })
+    },
+    makePublic (id) {
+      let data = {
+        '_csrf': this.$cookies.get('csrfToken'),
+        'data': {
+          status: 'public'
+        }
+      }
+      this.$api.put('codingQuestions/' + id, data, res => {
+        console.log(res)
+      }, res => {})
+      this.getData()
+    },
+    makePrivate (id) {
+      let data = {
+        '_csrf': this.$cookies.get('csrfToken'),
+        'data': {
+          status: 'edit'
+        }
+      }
+      this.$api.put('codingQuestions/' + id, data, res => {
+        console.log(res)
+      }, res => {})
+      this.getData()
     },
     showTag (row) {
       switch (row.programLang) {
