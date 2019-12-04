@@ -73,7 +73,7 @@
   </div>
 </template>
 <script>
-import bus from '../common/bus'
+// import bus from '../common/bus'
 export default{
   data () {
     return {
@@ -257,8 +257,12 @@ export default{
       }
     },
     selectQuestion (event) {
-      bus.$emit('cqId', event.id)
-      this.$router.push('/codingTest')
+      this.$router.push({
+        name: 'codingTest',
+        params: {
+          id: event.id
+        }
+      })
     },
     handleCurrentChange (val) {
       this.getQuestions((val - 1) * this.pageSize, this.pageSize)
